@@ -67,6 +67,7 @@
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
+#include "closed_loop_neuron.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 
@@ -93,6 +94,7 @@
 #include "spin_detector.h"
 
 #include "volume_transmitter.h"
+#include "volume_transmitter_alberto.h"
 
 // Prototypes for synapses
 #include "common_synapse_properties.h"
@@ -106,6 +108,8 @@
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
 #include "stdp_connection.h"
+#include "stdp_connection_sinexp.h"
+#include "stdp_connection_cosexp.h"
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
@@ -182,6 +186,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
   kernel().model_manager.register_node_model< parrot_neuron >(
     "parrot_neuron" );
+  kernel().model_manager.register_node_model< closed_loop_neuron >(
+    "closed_loop_neuron" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
     "pp_pop_psc_delta" );
@@ -227,6 +233,8 @@ ModelsModule::init( SLIInterpreter* )
     "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >(
     "volume_transmitter" );
+  kernel().model_manager.register_node_model< volume_transmitter_alberto >(
+    "volume_transmitter_alberto" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
   /*BeginDocumentation
@@ -408,6 +416,16 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPConnection< TargetIdentifierIndex > >(
       "stdp_synapse_hpc" );
+      
+  kernel()
+    .model_manager
+    .register_connection_model< STDPSinExpConnection< TargetIdentifierPtrRport > >(
+      "stdp_synapse_sinexp" );
+      
+  kernel()
+    .model_manager
+    .register_connection_model< STDPCosExpConnection< TargetIdentifierPtrRport > >(
+      "stdp_synapse_cosexp" );
 
 
   /* BeginDocumentation
@@ -572,8 +590,9 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
       "stdp_dopamine_synapse_hpc" );
-
-  /* BeginDocumentation
+      
+      
+/* BeginDocumentation
      Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
      with low memory
      consumption.
@@ -588,5 +607,7 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
 }
+
+
 
 } // namespace nest

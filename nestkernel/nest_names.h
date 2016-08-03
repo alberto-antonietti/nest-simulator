@@ -153,6 +153,7 @@ extern const Name file;                 //!< Recorder parameter
 extern const Name file_extension;       //!< Recorder parameter
 extern const Name filename;             //!< Recorder parameter
 extern const Name filenames;            //!< Recorder parameter
+extern const Name first_dcn;
 extern const Name flush_after_simulate; //!< Recorder parameter
 extern const Name flush_records;        //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
@@ -169,6 +170,7 @@ extern const Name g_L;           //!< Leak conductance
 extern const Name g_Na;          //!< Sodium conductance
 extern const Name g_rr;          //!< Other adaptation
 extern const Name g_sfa;         //!< Other adaptation
+extern const Name gain;          //!< Gain for the closed loop neuron
 extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
 extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
                                  //!< gamma_sup_generator
@@ -247,6 +249,7 @@ extern const Name neuron;        //!< Node type
 extern const Name node_uses_wfr; //!< Node parameter
 extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
 extern const Name ns;            //!< Number of release sites (property arrays)
+extern const Name num_dcn;       //!< Number of Deep Cerebellar Nuclei (closed_loop_neuron)
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter
@@ -264,12 +267,14 @@ extern const Name phi_th;                //!< Specific to mirollo_strogatz_ps
 extern const Name port;                  //!< Connection parameters
 extern const Name port_name;             //!< Parameters for MUSIC devices
 extern const Name port_width;            //!< Parameters for MUSIC devices
+extern const Name positive;
 extern const Name post_synaptic_element; //!< Post synaptic elements
 extern const Name pot_spikes;            //!< used for iaflossless_count_exp
 extern const Name potentials;            //!< Recorder parameter
 extern const Name pre_synaptic_element;  //!< Pre synaptic elements
 extern const Name precise_times;         //!< Recorder parameter
 extern const Name precision;             //!< Recorder parameter
+extern const Name protocol;
 extern const Name ps; //!< current release probability [0...1] (property arrays)
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)
