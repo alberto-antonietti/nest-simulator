@@ -205,8 +205,8 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
 		if (P_.ToFile_)
 			V_.OutputFile_ << Desired << "\t" << V_.DCNAvg_*P_.Gain_ << "\t" << Error << std::endl;
 	}
-	else if (P_.Protocol_ == 2.0 && V_.Trial_<=P_.Phase_){ //VOR ACQUISITION
-		double Desired = sin(2.0*3.1415*t/1000.0);	
+	else if (P_.Protocol_ == 2.0 && V_.Trial_>P_.Phase_){ //VOR EXTINCTION
+		double Desired = 0.0;	
 		Error = Desired - V_.DCNAvg_*P_.Gain_;
 		if (P_.ToFile_)
 			V_.OutputFile_ << Desired << "\t" << V_.DCNAvg_*P_.Gain_ << "\t" << Error << std::endl;
