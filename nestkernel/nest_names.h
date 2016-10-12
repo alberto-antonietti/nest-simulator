@@ -156,11 +156,13 @@ extern const Name file;                 //!< Recorder parameter
 extern const Name file_extension;       //!< Recorder parameter
 extern const Name filename;             //!< Recorder parameter
 extern const Name filenames;            //!< Recorder parameter
+extern const Name first_dcn;
 extern const Name flush_after_simulate; //!< Recorder parameter
 extern const Name flush_records;        //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
 extern const Name frozen;               //!< Node parameter
 
+<<<<<<< HEAD
 extern const Name g;     //!< Conductance
 extern const Name g_ahp; //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;  //!< Excitatory conductance
@@ -180,6 +182,28 @@ extern const Name global_id;    //!< Node parameter
 extern const Name growth_curve; //!< Growth curve for MSP dynamics
 extern const Name
   growth_rate; //!< Parameter of the growth curve for MSP dynamics
+=======
+extern const Name g;             //!< Conductance
+extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
+extern const Name g_ex;          //!< Excitatory conductance
+extern const Name g_in;          //!< inhibitory conductance
+extern const Name g_K;           //!< Potassium conductance
+extern const Name g_Kv1;         //!< Kv1 Potassium conductance
+extern const Name g_Kv3;         //!< Kv3 Potassium conductance
+extern const Name g_L;           //!< Leak conductance
+extern const Name g_Na;          //!< Sodium conductance
+extern const Name g_rr;          //!< Other adaptation
+extern const Name g_sfa;         //!< Other adaptation
+extern const Name gain;          //!< Gain for the closed loop neuron
+extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
+extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
+                                 //!< gamma_sup_generator
+extern const Name gaussian;      //!< Parameter for MSP growth curves
+extern const Name global_id;     //!< Node parameter
+extern const Name growth_curve;  //!< Growth curve for MSP dynamics
+extern const Name growth_rate;   //!< Parameter of the growth curve for MSP
+                                 //!< dynamics
+>>>>>>> newtrasmitter
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
 
 extern const Name h; //!< Summed input to a neuron (Ginzburg neuron)
@@ -254,6 +278,7 @@ extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name multapses;     //!< Connectivity-related
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
+<<<<<<< HEAD
 extern const Name
   n; //!< Number of synaptic release sites (int >=0) (Tsodyks2_connection)
 extern const Name
@@ -267,6 +292,21 @@ extern const Name neuron;              //!< Node type
 extern const Name node_uses_wfr;       //!< Node parameter
 extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
 extern const Name ns; //!< Number of release sites (property arrays)
+=======
+extern const Name n;             //!< Number of synaptic release sites (int >=0)
+                                 //!< (Tsodyks2_connection)
+extern const Name N;             //!< Specific to population point process model
+                                 //!< (pp_pop_psc_delta)
+extern const Name N_channels;    //!< Specific to correlomatrix_detector
+extern const Name n_events;      //!< Recorder parameter
+extern const Name n_proc;        //!< Number of component processes of ppd_sup_/
+                                 //!< gamma_sup_generator
+extern const Name neuron;        //!< Node type
+extern const Name node_uses_wfr; //!< Node parameter
+extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
+extern const Name ns;            //!< Number of release sites (property arrays)
+extern const Name num_dcn;       //!< Number of Deep Cerebellar Nuclei (closed_loop_neuron)
+>>>>>>> newtrasmitter
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter
@@ -284,12 +324,14 @@ extern const Name phi_th;                //!< Specific to mirollo_strogatz_ps
 extern const Name port;                  //!< Connection parameters
 extern const Name port_name;             //!< Parameters for MUSIC devices
 extern const Name port_width;            //!< Parameters for MUSIC devices
+extern const Name positive;
 extern const Name post_synaptic_element; //!< Post synaptic elements
 extern const Name pot_spikes;            //!< used for iaflossless_count_exp
 extern const Name potentials;            //!< Recorder parameter
 extern const Name pre_synaptic_element;  //!< Pre synaptic elements
 extern const Name precise_times;         //!< Recorder parameter
 extern const Name precision;             //!< Recorder parameter
+extern const Name protocol;
 extern const Name ps; //!< current release probability [0...1] (property arrays)
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)

@@ -922,7 +922,8 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig )
 {
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+ index t = kernel().vp_manager.get_thread_id();
+  //for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( tSConnector::const_nonempty_iterator it =
             connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
