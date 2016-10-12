@@ -146,7 +146,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( const Time&, const long_t, const long_t );
+  void update( const Time&, const long, const long );
 
   // --------------------------------------------
 
@@ -158,7 +158,7 @@ private:
     Parameters_();
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
-    long_t deliver_interval_; //!< update interval in d_min time steps
+    long deliver_interval_; //!< update interval in d_min time steps
   };
 
   //-----------------------------------------------
@@ -210,7 +210,7 @@ volume_transmitter_alberto::set_status( const DictionaryDatum& d )
 inline const std::vector< nest::spikecounter >&
 volume_transmitter_alberto::deliver_spikes()
 {
-  return B_.spikecounter_;
+    return B_.spikecounter_;
 }
 
 } // namespace

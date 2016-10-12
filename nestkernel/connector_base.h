@@ -454,16 +454,32 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
+	//std::cout << "sono enTRATO NEL CONNECTOR BASE TRIGGER UPDATE WEIGHT 1" << std::endl;
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < K; i++ )
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-             ->get_common_properties()
-             .get_vt_gid() == vt_gid )
-        C_[ i ].trigger_update_weight( t,
-          dopa_spikes,
-          t_trig,
-          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-            ->get_common_properties() );
+		if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == vt_gid
+			   ||
+			 static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == -2  
+			   ){
+
+		//std::cout << static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_name() << std::endl;
+		//std::cout << static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties().get_vt_gid() << " GET GID () " << std::endl;
+		//std::cout << vt_gid << " VT_GID" << std::endl;
+		std::vector< spikecounter > dopa_temp = dopa_spikes;
+		dopa_temp.push_back(spikecounter(1.0,vt_gid));
+		const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+
+		  C_[ i ].trigger_update_weight( t,
+			dopa_temp2,
+			t_trig,
+			static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			  ->get_common_properties() );
+		  //std::cout << " IF NEL 1 " << std::endl;
+		  }
   }
 
   synindex
@@ -679,15 +695,31 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
+	//std::cout << "sono enTRATO NEL CONNECTOR BASE TRIGGER UPDATE WEIGHT 2" << std::endl;
     synindex syn_id = C_[ 0 ].get_syn_id();
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
-           .get_vt_gid() == vt_gid )
+           .get_vt_gid() == vt_gid
+           ||
+         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+           ->get_common_properties()
+           .get_vt_gid() == -2  
+           ){
+			   
+	//std::cout << static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_name() << std::endl;
+	//std::cout << static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties().get_vt_gid() << " GET GID () " << std::endl;
+    //std::cout << vt_gid << " VT_GID" << std::endl;
+	std::vector< spikecounter > dopa_temp = dopa_spikes;
+    dopa_temp.push_back(spikecounter(1.0,vt_gid));
+    const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+			   
       C_[ 0 ].trigger_update_weight( t,
-        dopa_spikes,
+        dopa_temp2,
         t_trig,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
           ->get_common_properties() );
+      //std::cout << " IF NEL 2 " << std::endl;
+	  }
   }
 
   synindex
@@ -921,16 +953,32 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
+	//std::cout << "sono enTRATO NEL CONNECTOR BASE TRIGGER UPDATE WEIGHT 3" << std::endl;
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < C_.size(); i++ )
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-             ->get_common_properties()
-             .get_vt_gid() == vt_gid )
-        C_[ i ].trigger_update_weight( t,
-          dopa_spikes,
-          t_trig,
-          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-            ->get_common_properties() );
+		if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == vt_gid
+			   ||
+			 static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == -2  
+			   ){
+
+		//std::cout << static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_name() << std::endl;
+		//std::cout << static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties().get_vt_gid() << " GET GID () " << std::endl;
+		//std::cout << vt_gid << " VT_GID" << std::endl;
+		std::vector< spikecounter > dopa_temp = dopa_spikes;
+		dopa_temp.push_back(spikecounter(1.0,vt_gid));
+		const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+
+		  C_[ i ].trigger_update_weight( t,
+			dopa_temp2,
+			t_trig,
+			static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			  ->get_common_properties() );
+		  //std::cout << " IF NEL 3 " << std::endl;
+		  }
   }
 
   synindex
@@ -1078,8 +1126,10 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
-    for ( size_t i = 0; i < size(); i++ )
+	//std::cout << "sono enTRATO NEL CONNECTOR BASE TRIGGER UPDATE WEIGHT 4" << std::endl;
+    for ( size_t i = 0; i < size(); i++ ){
       at( i )->trigger_update_weight( vt_gid, t, dopa_spikes, t_trig, cm );
+	}
   }
 
   void

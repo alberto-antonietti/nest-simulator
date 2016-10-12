@@ -109,7 +109,7 @@ private:
   void init_state_( const Node& proto);
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;
@@ -150,7 +150,6 @@ private:
     bool CRFlag_;						//!< becomes true when a CR is detecnted
     int Trial_;							//!< counts the number of trials
   };
-  
   Buffers_ B_;
   Parameters_ P_;
   Variables_ V_;

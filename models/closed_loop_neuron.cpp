@@ -137,7 +137,7 @@ void nest::closed_loop_neuron::calibrate(){
 }
 
 
-void closed_loop_neuron::update( Time const& origin, const long_t from, const long_t to ){
+void closed_loop_neuron::update( Time const& origin, const long from, const long to ){
   assert(to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   
@@ -147,11 +147,11 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
   V_.OutputVariables_[1]*=exp(-0.001/tau_time_constant);
   
 
-  for ( long_t lag = from; lag < to; ++lag ){
-    const ulong_t current_spikes_n = static_cast< ulong_t >( B_.spike_gids_.size() );
+  for ( long lag = from; lag < to; ++lag ){
+    const unsigned long current_spikes_n = static_cast< unsigned long >( B_.spike_gids_.size() );
     if ( current_spikes_n > 0 ){
 		//std::cout << "SPIKE VECTOR SIZE = " << current_spikes_n << std::endl;
-		for ( ulong_t i = 0; i < current_spikes_n; i++ ){
+		for ( unsigned long i = 0; i < current_spikes_n; i++ ){
 			if (B_.spike_gids_[i]<P_.FirstDCN_+(P_.NumDCN_)/2){ //POSITIVE DCN
 				V_.OutputVariables_[0]+=kernel_amplitude;
 			}

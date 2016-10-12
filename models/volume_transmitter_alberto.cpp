@@ -54,12 +54,12 @@ nest::volume_transmitter_alberto::Parameters_::Parameters_()
 void
 nest::volume_transmitter_alberto::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< long_t >( d, "deliver_interval", deliver_interval_ );
+  def< long >( d, "deliver_interval", deliver_interval_ );
 }
 
 void ::nest::volume_transmitter_alberto::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< long_t >( d, "deliver_interval", deliver_interval_ );
+  updateValue< long >( d, "deliver_interval", deliver_interval_ );
 }
 
 /* ----------------------------------------------------------------
@@ -99,11 +99,11 @@ nest::volume_transmitter_alberto::calibrate()
   B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
-void nest::volume_transmitter_alberto::update( const Time&, const long_t from, const long_t to ){
+void nest::volume_transmitter_alberto::update( const Time&, const long from, const long to ){
   // spikes that arrive in this time slice are stored in spikecounter_
-  double_t t_spike;
-  double_t multiplicity;
-  long_t lag = from;
+  double t_spike;
+  double multiplicity;
+  long lag = from;
   multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
   if ( multiplicity > 0 ){
      t_spike =  Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps()+ lag + 1 ) ).get_ms();
@@ -111,10 +111,12 @@ void nest::volume_transmitter_alberto::update( const Time&, const long_t from, c
 
      // all spikes stored in spikecounter_ are delivered to the target synapses
      if ( ( kernel().simulation_manager.get_slice_origin().get_steps() + to ) % ( P_.deliver_interval_ * kernel().connection_manager.get_min_delay() ) == 0 ){
-         double_t t_trig = Time(Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + to ) ).get_ms();
-         if ( !B_.spikecounter_.empty() )
+         double t_trig = Time(Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + to ) ).get_ms();
+         if ( !B_.spikecounter_.empty() ){
+			//std::cout << "PRIMA" << std::endl;
             kernel().connection_manager.trigger_update_weight( get_gid(), B_.spikecounter_, t_trig );
-
+            //std::cout << "DOPO" << std::endl;
+		}
          // clear spikecounter
          B_.spikecounter_.clear();
 
@@ -130,5 +132,5 @@ void
 nest::volume_transmitter_alberto::handle( SpikeEvent& e )
 {
   B_.neuromodulatory_spikes_.add_value(e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    static_cast< double_t >( e.get_multiplicity() ) );
+    static_cast< double >( e.get_multiplicity() ) );
 }

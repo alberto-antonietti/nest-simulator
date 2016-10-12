@@ -41,11 +41,11 @@
    Examples:
    
    Parameters:
-     Common properties:
            vt		 long   - ID of volume_transmitter collecting the spikes from the pool of
                               dopamine releasing neurons and transmitting the spikes
                               to the synapse. A value of -1 indicates that no volume
                               transmitter has been assigned.
+     Common properties:
            A_plus    double - Amplitude of weight change for facilitation
            A_minus   double - Amplitude of weight change for depression
            Wmin      double - Minimal synaptic weight
@@ -75,24 +75,23 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  
+  long get_vt_gid() const;
 
-  Node* get_node();
-
-  long_t get_vt_gid() const;
-
-  volume_transmitter_alberto* vt_;
-  double_t A_plus_;
-  double_t A_minus_;
-  double_t Wmin_;
-  double_t Wmax_;
+  double A_plus_;
+  double A_minus_;
+  double Wmin_;
+  double Wmax_;
+  volume_transmitter_alberto* vtC_;
 };
 
-inline long_t STDPCosExpCommonProperties::get_vt_gid() const{
-  if ( vt_ != 0 )
-    return vt_->get_gid();
-  else
-    return -1;
+inline long
+STDPCosExpCommonProperties::get_vt_gid() const
+{
+    return -2;
 }
+
+
 
 /**
  * Class representing an STDPCosExpConnection with homogeneous parameters,
@@ -101,6 +100,12 @@ inline long_t STDPCosExpCommonProperties::get_vt_gid() const{
 template < typename targetidentifierT > class STDPCosExpConnection : public Connection< targetidentifierT > {
 
 public:
+
+  Node* get_node();
+
+  long get_vt_gid() const;
+
+  volume_transmitter_alberto* vt_;
 
   std::vector<double> SpikeBuffer_;
   
@@ -126,9 +131,9 @@ public:
 
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  void send( Event& e, thread t, double_t, const STDPCosExpCommonProperties& cp );
+  void send( Event& e, thread t, double, const STDPCosExpCommonProperties& cp );
 
-  void trigger_update_weight( thread t, const std::vector< spikecounter >& dopa_spikes, double_t t_trig, const STDPCosExpCommonProperties& cp );
+  void trigger_update_weight( thread t, const std::vector< spikecounter >& dopa_spikes, double t_trig, const STDPCosExpCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase{
   public:
@@ -157,17 +162,14 @@ public:
    * \param receptor_type The ID of the requested receptor type
    * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
-  void check_connection( Node& s, Node& t, rport receptor_type, double_t t_lastspike, const CommonPropertiesType& cp ){
-    if ( cp.vt_ == 0 )
-      throw BadProperty( "No neuron has been assigned as the modulator of the synapse." );
-
+  void check_connection( Node& s, Node& t, rport receptor_type, double t_lastspike, const CommonPropertiesType& cp ){
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
     t.register_stdp_connection( t_lastspike - get_delay() );
   }
 
-  void set_weight( double_t w ){
+  void set_weight( double w ){
     weight_ = w;
   }
 
@@ -175,12 +177,12 @@ private:
   // update dopamine trace from last to current dopamine spike and increment index
   void update_dopamine_( const std::vector< spikecounter >& dopa_spikes,const STDPCosExpCommonProperties& cp );
 
-  void update_weight_(double_t weight_change, const STDPCosExpCommonProperties& cp );
+  void update_weight_(double weight_change, const STDPCosExpCommonProperties& cp );
   
-  void process_dopa_spikes_( const std::vector< spikecounter >& dopa_spikes, double_t t0, double_t t1, const STDPCosExpCommonProperties& cp );
+  void process_dopa_spikes_( const std::vector< spikecounter >& dopa_spikes, double t0, double t1, const STDPCosExpCommonProperties& cp );
 
   // data members of each connection
-  double_t weight_;
+  double weight_;
 
   // dopa_spikes_idx_ refers to the dopamine spike that has just been processes
   // after trigger_update_weight a pseudo dopamine spike at t_trig is stored at index 0 and
@@ -188,7 +190,7 @@ private:
   index dopa_spikes_idx_;
 
   // time of last update, which is either time of last presyn. spike or time-driven update
-  double_t t_last_update_;
+  double t_last_update_;
 };
 
 //
@@ -197,6 +199,7 @@ private:
 
 template < typename targetidentifierT > STDPCosExpConnection< targetidentifierT >::STDPCosExpConnection()
   : ConnectionBase()
+  , vt_ ( 0 )
   , weight_( 1.0 )
   , dopa_spikes_idx_( 0 )
   , t_last_update_( 0.0 )
@@ -205,6 +208,7 @@ template < typename targetidentifierT > STDPCosExpConnection< targetidentifierT 
 
 template < typename targetidentifierT > STDPCosExpConnection< targetidentifierT >::STDPCosExpConnection( const STDPCosExpConnection& rhs )
   : ConnectionBase( rhs )
+  , vt_ ( rhs.vt_ )
   , weight_( rhs.weight_ )
   , dopa_spikes_idx_( rhs.dopa_spikes_idx_ )
   , t_last_update_( rhs.t_last_update_ )
@@ -215,13 +219,33 @@ template < typename targetidentifierT > void STDPCosExpConnection< targetidentif
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
+  def< double >( d, names::weight, weight_ );
+  if ( vt_ != 0 )
+    def< long >( d, "modulator", vt_->get_gid() );
+  else
+    def< long >( d, "modulator", -1 );
+}
+
+template < typename targetidentifierT > long STDPCosExpConnection< targetidentifierT >::get_vt_gid( ) const{
+
+    if ( vt_ != 0 ){
+		return vt_->get_gid();
+	}
+	else
+		return -1;
+
 }
 
 template < typename targetidentifierT > void STDPCosExpConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm ){
   // base class properties
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
+  long vtgid;
+  if ( updateValue< long >( d, "vt", vtgid ) ){
+    vt_ = dynamic_cast< volume_transmitter_alberto* >( kernel().node_manager.get_node( vtgid ) );
+    if ( vt_ == 0 )
+      throw BadProperty( "vt needs to be a Volume Transmitter" );
+  }
 }
 
 
@@ -229,7 +253,7 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 															  const std::vector< spikecounter >& dopa_spikes,
 															  const STDPCosExpCommonProperties& cp ){
 	// We enter here when there is a spike of the Volume Transmitter													  
-	double_t minus_dt = dopa_spikes[ dopa_spikes_idx_+1].spike_time_-1;
+	double minus_dt = dopa_spikes[ dopa_spikes_idx_+1].spike_time_-1;
 	//std::cout << "minus_dt: " << minus_dt << std::endl;
 	LastDopaSpike_ = minus_dt;
 /*	
@@ -244,7 +268,7 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 */
 	if (minus_dt > 0 && SpikeBuffer_.size()>0){
 		//std::cout << "SpikeBuffer_.size(): " << SpikeBuffer_.size() << std::endl;
-		double_t LTD_amount = 0.0;
+		double LTD_amount = 0.0;
 		for(int GR = 0; GR<SpikeBuffer_.size(); GR++){
 			double sd= SpikeBuffer_[GR] - minus_dt;
 			//std::cout <<  "SpikeBuffer_[GR]: " << SpikeBuffer_[GR] << std::endl;
@@ -262,7 +286,7 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 
 
 
-template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::update_weight_(double_t weight_change, const STDPCosExpCommonProperties& cp ){
+template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::update_weight_(double weight_change, const STDPCosExpCommonProperties& cp ){
   // LTP or LTD, depending on who calls this function
   weight_ = weight_+weight_change;
   
@@ -272,7 +296,7 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
     weight_ = cp.Wmax_;
 }
 
-template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::process_dopa_spikes_(const std::vector< spikecounter >& dopa_spikes, double_t t0, double_t t1, const STDPCosExpCommonProperties& cp ){
+template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::process_dopa_spikes_(const std::vector< spikecounter >& dopa_spikes, double t0, double t1, const STDPCosExpCommonProperties& cp ){
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 ) && ( dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ <= t1 ) ){
@@ -287,21 +311,21 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
  * \param p The port under which this connection is stored in the Connector.
  * \param t_lastspike Time point of last spike emitted
  */
-template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::send( Event& e, thread t, double_t, const STDPCosExpCommonProperties& cp ){
+template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::send( Event& e, thread t, double, const STDPCosExpCommonProperties& cp ){
   // t_lastspike_ = 0 initially
 
   Node* target = get_target( t );
 
   // purely dendritic delay
   
-  double_t t_spike = e.get_stamp().get_ms();
+  double t_spike = e.get_stamp().get_ms();
   
   // LTP (of a factor A_plus) due to new pre-synaptic spike
   double t_spike_d = t_spike;
   SpikeBuffer_.push_back(t_spike_d);
   update_weight_(cp.A_plus_, cp);
   
-  double_t LTD_amount = 0.0;
+  double LTD_amount = 0.0;
   double sd = t_spike_d - LastDopaSpike_+1;
   if (sd <= 10.0){
 	  LTD_amount += cp.A_minus_ * exp(-(abs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
@@ -324,11 +348,19 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 template < typename targetidentifierT > inline void STDPCosExpConnection< targetidentifierT >::trigger_update_weight(
 																   thread t,
 																   const std::vector< spikecounter >& dopa_spikes,
-																   const double_t t_trig,
+																   const double t_trig,
 																   const STDPCosExpCommonProperties& cp ){
   
+  int Vid_Check = (dopa_spikes.back()).multiplicity_;
+  std::vector< spikecounter > dopa_temp = dopa_spikes;
+  dopa_temp.pop_back();
+  const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+  //std::cout << Vid_Check << "<Check - vid>" << get_vt_gid() << std::endl;
+  if (Vid_Check != get_vt_gid())
+	return;
+
   // purely dendritic delay
-  double_t dendritic_delay = get_delay();
+  double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t_last_update, t_trig] from postsyn. neuron
   std::deque< histentry >::iterator start;
@@ -338,16 +370,27 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
   //std::cout << get_target( t )->get_gid() << std::endl;
   
   // facilitation due to postsyn. spikes since last update
-  double_t t0 = t_last_update_;
+  double t0 = t_last_update_;
 
   // propagate weight, eligibility trace c, dopamine trace n and facilitation trace K_plus to time
   // t_trig
   // but do not increment/decrement as there are no spikes to be handled at t_trig
-  process_dopa_spikes_( dopa_spikes, t0, t_trig, cp );
+  //std::cout << "trigger_update_weight" << std::endl;
+  process_dopa_spikes_( dopa_temp2, t0, t_trig, cp );
   
   t_last_update_ = t_trig;
   dopa_spikes_idx_ = 0;
 }
+
+
+template < typename targetidentifierT > inline Node* STDPCosExpConnection< targetidentifierT >::get_node(){
+  if ( vt_ == 0 )
+    throw BadProperty( "No neuron has been assigned as the modulator of the synapse." );
+  else
+    return vt_;
+}
+
+
 
 } // of namespace nest
 
