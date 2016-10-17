@@ -256,7 +256,7 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 	double minus_dt = dopa_spikes[ dopa_spikes_idx_+1].spike_time_-1;
 	//std::cout << "minus_dt: " << minus_dt << std::endl;
 	LastDopaSpike_ = minus_dt;
-/*	
+	
 	if (SpikeBuffer_.size()>0){
 		//std::cout << SpikeBuffer_[0]  << " <-SpikeBuffer_[0] \t minus_dt-> " << minus_dt << std::endl;
 		while(SpikeBuffer_[0]<minus_dt-10.0){
@@ -264,8 +264,9 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 			if (SpikeBuffer_.size()==0)
 				break;
 		}
-	} 
-*/
+	}
+	//std::cout << "SPIKE BUFFER SIZE: " << SpikeBuffer_.size() << std::endl;
+
 	if (minus_dt > 0 && SpikeBuffer_.size()>0){
 		//std::cout << "SpikeBuffer_.size(): " << SpikeBuffer_.size() << std::endl;
 		double LTD_amount = 0.0;
@@ -273,8 +274,8 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 			double sd= SpikeBuffer_[GR] - minus_dt;
 			//std::cout <<  "SpikeBuffer_[GR]: " << SpikeBuffer_[GR] << std::endl;
 			if (sd <= 10.0 && sd >= -10.0){
-				LTD_amount += cp.A_minus_ * exp(-(abs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
-				//std::cout << "SpikeBuffer_[GR]: " << SpikeBuffer_[GR] << "spike distance: " << sd << " LTD amout : " << cp.A_minus_ * exp(-(abs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2) << std::endl;
+				LTD_amount += cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
+				//std::cout << "SpikeBuffer_[GR]: " << SpikeBuffer_[GR] << "spike distance: " << sd << " LTD amout : " << cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2) << std::endl;
 			}
 		}
 		update_weight_(LTD_amount, cp);
@@ -328,8 +329,8 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
   double LTD_amount = 0.0;
   double sd = t_spike_d - LastDopaSpike_+1;
   if (sd <= 10.0){
-	  LTD_amount += cp.A_minus_ * exp(-(abs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
-	  //std::cout << "spike distance: " << sd << " LTD amout : " << cp.A_minus_ * exp(-(abs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2) << std::endl;
+	  LTD_amount += cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
+	  //std::cout << "spike distance: " << sd << " LTD amout : " << cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2) << std::endl;
   }
   update_weight_(LTD_amount, cp);
   
