@@ -145,6 +145,7 @@ public:
       return invalid_port_;
     }
   };
+  
 
   /*
    * This function calls check_connection on the sender and checks if the receiver
@@ -163,6 +164,7 @@ public:
    * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
   void check_connection( Node& s, Node& t, rport receptor_type, double t_lastspike, const CommonPropertiesType& cp ){
+	  
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
@@ -224,6 +226,7 @@ template < typename targetidentifierT > void STDPCosExpConnection< targetidentif
     def< long >( d, "modulator", vt_->get_gid() );
   else
     def< long >( d, "modulator", -1 );
+
 }
 
 template < typename targetidentifierT > long STDPCosExpConnection< targetidentifierT >::get_vt_gid( ) const{
@@ -254,28 +257,22 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 															  const STDPCosExpCommonProperties& cp ){
 	// We enter here when there is a spike of the Volume Transmitter													  
 	double minus_dt = dopa_spikes[ dopa_spikes_idx_+1].spike_time_-1;
-	//std::cout << "minus_dt: " << minus_dt << std::endl;
 	LastDopaSpike_ = minus_dt;
 	
 	if (SpikeBuffer_.size()>0){
-		//std::cout << SpikeBuffer_[0]  << " <-SpikeBuffer_[0] \t minus_dt-> " << minus_dt << std::endl;
 		while(SpikeBuffer_[0]<minus_dt-10.0){
 			SpikeBuffer_.erase(SpikeBuffer_.begin());
 			if (SpikeBuffer_.size()==0)
 				break;
 		}
 	}
-	//std::cout << "SPIKE BUFFER SIZE: " << SpikeBuffer_.size() << std::endl;
 
 	if (minus_dt > 0 && SpikeBuffer_.size()>0){
-		//std::cout << "SpikeBuffer_.size(): " << SpikeBuffer_.size() << std::endl;
 		double LTD_amount = 0.0;
 		for(int GR = 0; GR<SpikeBuffer_.size(); GR++){
 			double sd= SpikeBuffer_[GR] - minus_dt;
-			//std::cout <<  "SpikeBuffer_[GR]: " << SpikeBuffer_[GR] << std::endl;
 			if (sd <= 10.0 && sd >= -10.0){
 				LTD_amount += cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
-				//std::cout << "SpikeBuffer_[GR]: " << SpikeBuffer_[GR] << "spike distance: " << sd << " LTD amout : " << cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2) << std::endl;
 			}
 		}
 		update_weight_(LTD_amount, cp);
@@ -316,8 +313,6 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
   // t_lastspike_ = 0 initially
 
   Node* target = get_target( t );
-
-  // purely dendritic delay
   
   double t_spike = e.get_stamp().get_ms();
   
@@ -330,7 +325,6 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
   double sd = t_spike_d - LastDopaSpike_+1;
   if (sd <= 10.0){
 	  LTD_amount += cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
-	  //std::cout << "spike distance: " << sd << " LTD amout : " << cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2) << std::endl;
   }
   update_weight_(LTD_amount, cp);
   
@@ -356,7 +350,6 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
   std::vector< spikecounter > dopa_temp = dopa_spikes;
   dopa_temp.pop_back();
   const std::vector< spikecounter > dopa_temp2 = dopa_temp;
-  //std::cout << Vid_Check << "<Check - vid>" << get_vt_gid() << std::endl;
   if (Vid_Check != get_vt_gid())
 	return;
 
@@ -367,16 +360,13 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   get_target( t )->get_history(t_last_update_ - dendritic_delay, t_trig - dendritic_delay, &start, &finish );
-  
-  //std::cout << get_target( t )->get_gid() << std::endl;
-  
+    
   // facilitation due to postsyn. spikes since last update
   double t0 = t_last_update_;
 
   // propagate weight, eligibility trace c, dopamine trace n and facilitation trace K_plus to time
   // t_trig
   // but do not increment/decrement as there are no spikes to be handled at t_trig
-  //std::cout << "trigger_update_weight" << std::endl;
   process_dopa_spikes_( dopa_temp2, t0, t_trig, cp );
   
   t_last_update_ = t_trig;

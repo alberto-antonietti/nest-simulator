@@ -88,7 +88,8 @@ nest::volume_transmitter_alberto::init_buffers_()
 {
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
-  B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
+  B_.spikecounter_.push_back(
+    spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
   Archiving_Node::clear_history();
 }
 
@@ -96,10 +97,13 @@ void
 nest::volume_transmitter_alberto::calibrate()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
-  B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
+  B_.spikecounter_.reserve(
+    kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
-void nest::volume_transmitter_alberto::update( const Time&, const long from, const long to ){
+void
+nest::volume_transmitter_alberto::update( const Time&, const long from, const long to )
+{
   // spikes that arrive in this time slice are stored in spikecounter_
   double t_spike;
   double multiplicity;
@@ -113,9 +117,7 @@ void nest::volume_transmitter_alberto::update( const Time&, const long from, con
      if ( ( kernel().simulation_manager.get_slice_origin().get_steps() + to ) % ( P_.deliver_interval_ * kernel().connection_manager.get_min_delay() ) == 0 ){
          double t_trig = Time(Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + to ) ).get_ms();
          if ( !B_.spikecounter_.empty() ){
-			//std::cout << "PRIMA" << std::endl;
             kernel().connection_manager.trigger_update_weight( get_gid(), B_.spikecounter_, t_trig );
-            //std::cout << "DOPO" << std::endl;
 		}
          // clear spikecounter
          B_.spikecounter_.clear();
@@ -131,6 +133,7 @@ void nest::volume_transmitter_alberto::update( const Time&, const long from, con
 void
 nest::volume_transmitter_alberto::handle( SpikeEvent& e )
 {
-  B_.neuromodulatory_spikes_.add_value(e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.neuromodulatory_spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }

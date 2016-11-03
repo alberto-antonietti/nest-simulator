@@ -52,7 +52,7 @@ namespace nest
 
 nest::closed_loop_neuron::Parameters_::Parameters_()
   : Gain_( 1.0 )    // adimensional
-  , NumDCN_( 36.0 )   // Number of DCN as output
+  , NumDCN_( 1.0 )   // Number of DCN as output
   , Positive_( true ) // Positive or Negative Neuron
   , ToFile_( false )  // If it writes the OutputFile.dat
 {
@@ -117,8 +117,7 @@ void nest::closed_loop_neuron::init_state_( const Node& proto ){
 void closed_loop_neuron::init_buffers_(){
   B_.spike_gids_.clear();
   Archiving_Node::clear_history();
-  //std::cout << "INIT BUFFERS FUNCTION - Closed_loop_neuron.cpp " << std::endl;
-}
+  }
 
 void nest::closed_loop_neuron::calibrate(){
   V_.DCNAvg_ = 0.0;
@@ -133,7 +132,6 @@ void nest::closed_loop_neuron::calibrate(){
 		V_.CRFile_.open("CR.dat");
   }
   V_.Trial_=0;
-  //std::cout << "CALIBRATE FUNCTION - Closed_loop_neuron.cpp " << std::endl;
 }
 
 
@@ -150,7 +148,6 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
   for ( long lag = from; lag < to; ++lag ){
     const unsigned long current_spikes_n = static_cast< unsigned long >( B_.spike_gids_.size() );
     if ( current_spikes_n > 0 ){
-		//std::cout << "SPIKE VECTOR SIZE = " << current_spikes_n << std::endl;
 		for ( unsigned long i = 0; i < current_spikes_n; i++ ){
 			if (B_.spike_gids_[i]<P_.FirstDCN_+(P_.NumDCN_)/2){ //POSITIVE DCN
 				V_.OutputVariables_[0]+=kernel_amplitude;
@@ -164,7 +161,6 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
 	V_.DCNBuffer_.erase(V_.DCNBuffer_.begin());
 	V_.DCNBuffer_.push_back(V_.OutputVariables_[0]-V_.OutputVariables_[1]);
 	V_.DCNAvg_=accumulate( V_.DCNBuffer_.begin(), V_.DCNBuffer_.end(), 0.0)/V_.DCNBuffer_.size();
-    //std::cout << "DCNAVG = " << V_.DCNAvg_ << " and buffer size = " << V_.DCNBuffer_.size() << std::endl;
     int t = origin.get_steps() + lag;
     double Error = 0.0;
     if (t % (int) P_.TrialDuration_ == 0 ){
@@ -251,8 +247,6 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
 void closed_loop_neuron::handle( SpikeEvent& e ){
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() ){
-    //std::cout << "e.get_rport() = " << e.get_rport() << std::endl;
-    //std::cout <<  e.get_sender_gid() << std::endl;
     B_.spike_gids_.push_back(e.get_sender_gid());
   }
 }

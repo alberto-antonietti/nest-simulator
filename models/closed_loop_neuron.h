@@ -147,7 +147,7 @@ private:
     double OutputVariables_[2];			//!< actual Positive and Negative DCN Firing Rate
     std::ofstream OutputFile_;      	//!< OutputFile
     std::ofstream CRFile_;				//!< CRFIle
-    bool CRFlag_;						//!< becomes true when a CR is detecnted
+    bool CRFlag_;						//!< becomes true when a CR is detected
     int Trial_;							//!< counts the number of trials
   };
   Buffers_ B_;

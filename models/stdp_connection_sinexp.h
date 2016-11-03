@@ -256,20 +256,16 @@ template < typename targetidentifierT > inline void STDPSinExpConnection< target
 	// We enter here when there is a spike of the Volume Transmitter	
 													  
 	double minus_dt = dopa_spikes[ dopa_spikes_idx_+1].spike_time_-1;
-   // std::cout << "We enter here when there is a spike of the Volume Transmitter"	<< std::endl;
 	if (SpikeBuffer_.size()>0){
-		//std::cout << SpikeBuffer_[0]  << " <-SpikeBuffer_[0] \t minus_dt-> " << minus_dt << std::endl;
 		double LTD_amount = 0.0;
 		for(int GR = 0; GR<SpikeBuffer_.size(); GR++){
 			double sd= SpikeBuffer_[GR] - minus_dt;
-			//std::cout << "SD: " << sd << std::endl;
 			if (sd < -200){
 				//SpikeBuffer_.erase(SpikeBuffer_.begin()+GR);
 				//GR--;
 			}
 			if ( sd<0 && sd>=-200){
 				LTD_amount += cp.A_minus_ * exp(-(sd-150)/1000.0)*pow((sin(2*3.1415*(sd-150)/1000.0)),20)/1.2848;
-				//std::cout << "spike distance: " << sd << " LTD amout : " << exp(-(sd-150)/1000.0)*pow((sin(2*3.1415*(sd-150)/1000.0)),20)/1.2848 << std::endl;
 			}
 		}
 		update_weight_(LTD_amount, cp);
@@ -312,7 +308,6 @@ template < typename targetidentifierT > inline void STDPSinExpConnection< target
   Node* target = get_target( t );
   
   double t_spike = e.get_stamp().get_ms();
-  //std::cout << "SEND" << std::endl;
   
   // LTP (of a factor A_plus) due to new pre-synaptic spike
   double t_spike_d = t_spike;
@@ -341,7 +336,6 @@ template < typename targetidentifierT > inline void STDPSinExpConnection< target
   std::vector< spikecounter > dopa_temp = dopa_spikes;
   dopa_temp.pop_back();
   const std::vector< spikecounter > dopa_temp2 = dopa_temp;
-  //std::cout << Vid_Check << "<Check - vid>" << get_vt_gid() << std::endl;
   if (Vid_Check != get_vt_gid())
 	return;
 
@@ -352,16 +346,13 @@ template < typename targetidentifierT > inline void STDPSinExpConnection< target
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   get_target( t )->get_history(t_last_update_ - dendritic_delay, t_trig - dendritic_delay, &start, &finish );
-  
-  //std::cout << get_target( t )->get_gid() << std::endl;
-  
+    
   // facilitation due to postsyn. spikes since last update
   double t0 = t_last_update_;
 
   // propagate weight, eligibility trace c, dopamine trace n and facilitation trace K_plus to time
   // t_trig
   // but do not increment/decrement as there are no spikes to be handled at t_trig
-  //std::cout << "trigger_update_weight" << std::endl;
   process_dopa_spikes_( dopa_temp2, t0, t_trig, cp );
   
   t_last_update_ = t_trig;
