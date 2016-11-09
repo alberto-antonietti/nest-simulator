@@ -269,8 +269,8 @@ template < typename targetidentifierT > inline void STDPCosExpConnection< target
 
 	if (minus_dt > 0 && SpikeBuffer_.size()>0){
 		double LTD_amount = 0.0;
-		for(int GR = 0; GR<SpikeBuffer_.size(); GR++){
-			double sd= SpikeBuffer_[GR] - minus_dt;
+		for(int MF = 0; MF<SpikeBuffer_.size(); MF++){
+			double sd= SpikeBuffer_[MF] - minus_dt;
 			if (sd <= 10.0 && sd >= -10.0){
 				LTD_amount += cp.A_minus_ * exp(-(fabs(400.0*sd/1000.0)))*pow(cos(sd/1000.0),2);
 			}
