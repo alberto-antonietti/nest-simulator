@@ -184,6 +184,7 @@ extern const Name g_rr;          //!< Other adaptation
 extern const Name g_sfa;         //!< Other adaptation
 extern const Name GABA_A;
 extern const Name GABA_B;
+extern const Name gain;
 extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
 extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
                                  //!< gamma_sup_generator
