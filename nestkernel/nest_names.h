@@ -388,6 +388,8 @@ extern const Name Tstart;          //!< Specific to correlation and
                                    //!< correlomatrix detector
 extern const Name Tstop; //!< Specific to correlation and correlomatrix detector
 
+extern const Name Tduration; //!< US duration for Closed Loop Neuron
+
 extern const Name u; //!< probability of release [0...1] (Tsodyks2_connection)
 extern const Name U_lower;
 extern const Name U_m; //!< Specific to Izhikevich 2003

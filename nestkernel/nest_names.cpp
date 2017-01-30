@@ -347,6 +347,7 @@ const Name to_memory( "to_memory" );
 const Name to_screen( "to_screen" );
 const Name Tstart( "Tstart" );
 const Name Tstop( "Tstop" );
+const Name Tduration( "Tduration" );
 
 const Name u( "u" );
 const Name U_lower( "U_lower" );

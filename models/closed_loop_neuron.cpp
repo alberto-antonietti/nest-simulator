@@ -70,7 +70,8 @@ void nest::closed_loop_neuron::Parameters_::get( DictionaryDatum& d ) const {
   def< bool   >( d, names::to_file, ToFile_ );
   def< double >( d, names::protocol, Protocol_ );
   def< double >( d, names::Tstart, USOnset_ );
-  def< double >( d, names::Tstop, TrialDuration_ );
+  def< double >( d, names::Tstop, USDuration_ );
+  def< double >( d, names::Tduration, TrialDuration_ );
   def< double >( d, names::phase, Phase_ );
 }
 
@@ -83,7 +84,8 @@ void nest::closed_loop_neuron::Parameters_::set( const DictionaryDatum& d ){
   updateValue< bool   >( d, names::to_file, ToFile_ );
   updateValue< double >( d, names::protocol, Protocol_ );
   updateValue< double >( d, names::Tstart, USOnset_ );
-  updateValue< double >( d, names::Tstop, TrialDuration_ );
+  updateValue< double >( d, names::Tstop, USDuration_ );
+  updateValue< double >( d, names::Tduration, TrialDuration_ );
   updateValue< double >( d, names::phase, Phase_ );
 }
 
@@ -172,7 +174,7 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
     
     //!< EBCC PROTOCOL - ACQUISITION AND EXTINCTION
     if (P_.Protocol_ == 1.0 && V_.Trial_<=P_.Phase_){ //EBCC ACQUISITION		
-		if ((t-(V_.Trial_-1)*P_.TrialDuration_) >= P_.USOnset_ && P_.Positive_){
+		if ((t-(V_.Trial_-1)*P_.TrialDuration_) >= P_.USOnset_ && (t-(V_.Trial_-1)*P_.TrialDuration_) < P_.USOnset_+P_.USDuration_ && P_.Positive_){
 			 if(!V_.CRFlag_)
 				Error = 1.0; //NO CR before
 			 else
