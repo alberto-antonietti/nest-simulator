@@ -111,6 +111,8 @@ private:
   void calibrate();
   void update( Time const&, const long, const long );
 
+  librandom::RngPtr rng_;
+
   /**
      Buffers and accumulates the number of incoming spikes per time step;
      RingBuffer stores doubles; for now the numbers are casted.
