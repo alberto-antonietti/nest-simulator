@@ -223,9 +223,10 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
 		std::cout << "Warning: Error Exceeds the nominal range (< -1.0)" << std::endl;
 	}
     
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
     
     if (P_.Positive_ && Error > 0.0){ //Positive Neuron and Positive Error
-		if (0.01*Error > static_cast <float> (rand()) / static_cast <float> (RAND_MAX)){
+		if (0.01*Error > rng->drand()){
 			// When the error is max == 1, we have a mean firing rate equal to 10 Hz (max freq)
 			SpikeEvent se;
 			se.set_multiplicity( 1 );
@@ -234,7 +235,7 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
 		}
 	}
 	else if (!P_.Positive_ && Error < 0.0){
-		if (-0.01*Error > static_cast <float> (rand()) / static_cast <float> (RAND_MAX)){
+		if (-0.01*Error > rng->drand()){
 			// When the error is max == -1, we have a mean firing rate equal to 10 Hz (max freq)
 			SpikeEvent se;
 			se.set_multiplicity( 1 );
