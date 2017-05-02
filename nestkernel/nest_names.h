@@ -205,7 +205,7 @@ extern const Name histogram_correction; //!< Specific to correlation_detector
 extern const Name HMIN; //!< Smallest integration step for adaptive stepsize
                         //!< (Brette & Gerstner 2005)
 
-extern const Name I;        //!< Specific to mirollo_strogatz_ps
+extern const Name I;        //!< mirollo_strogatz_ps, StimulatingDevice
 extern const Name I_adapt;  //!< Goal of current homeostasis
                             //!< (current homeostasis)
 extern const Name I_e;      //!< Input current
@@ -311,7 +311,8 @@ extern const Name protocol;
 
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)
-extern const Name published;          //!< Parameters for MUSIC devices
+extern const Name psi;       //!< Width parameter for sigmoid growth curve
+extern const Name published; //!< Parameters for MUSIC devices
 
 extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
@@ -347,6 +348,7 @@ extern const Name S_act_NMDA;  //!< specific to Hill & Tononi 2005
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
 extern const Name senders;     //!< Recorder parameter
+extern const Name sigmoid;     //!< Sigmoid MSP growth curve
 extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.

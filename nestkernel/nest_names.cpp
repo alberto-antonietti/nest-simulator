@@ -270,6 +270,7 @@ const Name protocol( "protocol" );
 
 const Name PSC_adapt_step( "PSC_adapt_step" );
 const Name PSC_Unit_amplitude( "PSC_Unit_amplitude" );
+const Name psi( "psi" );
 const Name published( "published" );
 
 const Name q_rr( "q_rr" );
@@ -299,6 +300,7 @@ const Name S_act_NMDA( "S_act_NMDA" );
 const Name scientific( "scientific" );
 const Name screen( "screen" );
 const Name senders( "senders" );
+const Name sigmoid( "sigmoid" );
 const Name size_of( "sizeof" );
 const Name source( "source" );
 const Name spike( "spike" );
