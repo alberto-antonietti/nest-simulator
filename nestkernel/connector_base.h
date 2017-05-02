@@ -512,18 +512,25 @@ public:
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < K; i++ )
-    {
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-             ->get_common_properties()
-             .get_vt_gid() == vt_gid )
-      {
-        C_[ i ].trigger_update_weight( t,
-          dopa_spikes,
-          t_trig,
-          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-            ->get_common_properties() );
-      }
-    }
+		if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == vt_gid
+			   ||
+			 static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == -2  
+			   ){
+
+		std::vector< spikecounter > dopa_temp = dopa_spikes;
+		dopa_temp.push_back(spikecounter(1.0,vt_gid));
+		const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+
+		  C_[ i ].trigger_update_weight( t,
+			dopa_temp2,
+			t_trig,
+			static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			  ->get_common_properties() );
+		  }
   }
 
   synindex
@@ -751,13 +758,22 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
-    synindex syn_id = C_[ 0 ].get_syn_id();
+	synindex syn_id = C_[ 0 ].get_syn_id();
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
-           .get_vt_gid() == vt_gid )
-    {
+           .get_vt_gid() == vt_gid
+           ||
+         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+           ->get_common_properties()
+           .get_vt_gid() == -2  
+           ){
+			   
+	std::vector< spikecounter > dopa_temp = dopa_spikes;
+    dopa_temp.push_back(spikecounter(1.0,vt_gid));
+    const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+			   
       C_[ 0 ].trigger_update_weight( t,
-        dopa_spikes,
+        dopa_temp2,
         t_trig,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
           ->get_common_properties() );
@@ -1020,20 +1036,27 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
-    synindex syn_id = C_[ 0 ].get_syn_id();
+	synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < C_.size(); i++ )
-    {
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-             ->get_common_properties()
-             .get_vt_gid() == vt_gid )
-      {
-        C_[ i ].trigger_update_weight( t,
-          dopa_spikes,
-          t_trig,
-          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-            ->get_common_properties() );
-      }
-    }
+		if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == vt_gid
+			   ||
+			 static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			   ->get_common_properties()
+			   .get_vt_gid() == -2  
+			   ){
+
+		std::vector< spikecounter > dopa_temp = dopa_spikes;
+		dopa_temp.push_back(spikecounter(1.0,vt_gid));
+		const std::vector< spikecounter > dopa_temp2 = dopa_temp;
+
+		  C_[ i ].trigger_update_weight( t,
+			dopa_temp2,
+			t_trig,
+			static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+			  ->get_common_properties() );
+		  }
   }
 
   synindex

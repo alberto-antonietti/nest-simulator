@@ -41,6 +41,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
         nest.SetDefaults('stdp_dopamine_synapse_lbl', {'vt': vol[1]})
         nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol[2]})
+	vol_a = nest.Create('volume_transmitter_alberto', 4)
+	nest.SetDefaults('stdp_synapse_cosexp', {'vt': vol_a[0]})
+	nest.SetDefaults('stdp_synapse_sinexp', {'vt': vol_a[1]})
+	nest.SetDefaults('stdp_synapse_cosexp_lbl', {'vt': vol_a[2]})
+	nest.SetDefaults('stdp_synapse_sinexp_lbl', {'vt': vol_a[3]})
 
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the

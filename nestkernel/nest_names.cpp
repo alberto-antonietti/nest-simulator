@@ -128,6 +128,7 @@ const Name file( "file" );
 const Name file_extension( "file_extension" );
 const Name filename( "filename" );
 const Name filenames( "filenames" );
+const Name first_dcn( "first_dcn" );
 const Name flush_after_simulate( "flush_after_simulate" );
 const Name flush_records( "flush_records" );
 const Name frequency( "frequency" );
@@ -158,6 +159,7 @@ const Name g_peak_NMDA( "g_peak_NMDA" );
 const Name g_peak_T( "g_peak_T" );
 const Name g_rr( "g_rr" );
 const Name g_sfa( "g_sfa" );
+const Name gain( "gain" );
 const Name GABA_A( "GABA_A" );
 const Name GABA_B( "GABA_B" );
 const Name gamma( "gamma" );
@@ -199,6 +201,7 @@ const Name index_map( "index_map" );
 const Name individual_spike_trains( "individual_spike_trains" );
 const Name inh_conductance( "inh_conductance" );
 const Name instant_unblock_NMDA( "instant_unblock_NMDA" );
+
 const Name Interpol_Order( "Interpol_Order" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );
@@ -209,6 +212,7 @@ const Name len_kernel( "len_kernel" );
 const Name linear( "linear" );
 const Name local( "local" );
 const Name local_id( "local_id" );
+const Name LTP( "LTP" );
 
 const Name make_symmetric( "make_symmetric" );
 const Name max_delay( "max_delay" );
@@ -233,7 +237,9 @@ const Name neuron( "neuron" );
 const Name NMDA( "NMDA" );
 const Name node_uses_wfr( "node_uses_wfr" );
 const Name noise( "noise" );
+const Name num_dcn( "num_dcn" );
 const Name num_connections( "num_connections" );
+
 
 const Name offset( "offset" );
 const Name offsets( "offsets" );
@@ -254,11 +260,14 @@ const Name port( "port" );
 const Name ports( "ports" );
 const Name port_name( "port_name" );
 const Name port_width( "port_width" );
+const Name positive( "positive" );
 const Name post_synaptic_element( "post_synaptic_element" );
 const Name potentials( "potentials" );
 const Name pre_synaptic_element( "pre_synaptic_element" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );
+const Name protocol( "protocol" );
+
 const Name PSC_adapt_step( "PSC_adapt_step" );
 const Name PSC_Unit_amplitude( "PSC_Unit_amplitude" );
 const Name psi( "psi" );
@@ -376,6 +385,7 @@ const Name to_memory( "to_memory" );
 const Name to_screen( "to_screen" );
 const Name Tstart( "Tstart" );
 const Name Tstop( "Tstop" );
+const Name Tduration( "Tduration" );
 
 const Name u( "u" );
 const Name U_lower( "U_lower" );
