@@ -115,7 +115,6 @@ nest::iaf_cond_exp::Parameters_::Parameters_()
   , tau_synE( 0.2 )   // ms
   , tau_synI( 2.0 )   // ms
   , I_e( 0.0 )        // pA
-  , LTP ( 0.0)      // nS
 {
 }
 
@@ -165,8 +164,6 @@ nest::iaf_cond_exp::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_ex, tau_synE );
   def< double >( d, names::tau_syn_in, tau_synI );
   def< double >( d, names::I_e, I_e );
-  def< double >( d, names::LTP, LTP );
-  
 }
 
 void
