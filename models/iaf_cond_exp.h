@@ -293,7 +293,9 @@ inline port
 iaf_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type > 1 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
