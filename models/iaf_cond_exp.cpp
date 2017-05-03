@@ -185,7 +185,6 @@ nest::iaf_cond_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-  
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -356,11 +355,12 @@ nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
+
   for ( long lag = from; lag < to; ++lag )
   {
 
     double t = 0.0;
-	
+
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
