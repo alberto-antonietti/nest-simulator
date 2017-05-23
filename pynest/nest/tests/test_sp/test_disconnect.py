@@ -52,6 +52,10 @@ class TestDisconnectSingle(unittest.TestCase):
             'stdp_dopamine_synapse_hpc_lbl',
             'gap_junction',
             'gap_junction_lbl',
+	    'stdp_synapse_cosexp',
+	    'stdp_synapse_sinexp',
+	    'stdp_synapse_cosexp_lbl',
+	    'stdp_synapse_sinexp_lbl'
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
