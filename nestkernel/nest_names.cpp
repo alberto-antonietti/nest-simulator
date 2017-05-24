@@ -239,7 +239,6 @@ const Name inh_conductance( "inh_conductance" );
 const Name init_flag( "init_flag" );
 const Name instant_unblock_NMDA( "instant_unblock_NMDA" );
 const Name instantiations( "instantiations" );
-
 const Name Interpol_Order( "Interpol_Order" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );
@@ -331,7 +330,6 @@ const Name proximal_curr( "proximal_curr" );
 const Name proximal_exc( "proximal_exc" );
 const Name proximal_inh( "proximal_inh" );
 const Name protocol( "protocol" );
-
 const Name PSC_adapt_step( "PSC_adapt_step" );
 const Name PSC_Unit_amplitude( "PSC_Unit_amplitude" );
 const Name psi( "psi" );
