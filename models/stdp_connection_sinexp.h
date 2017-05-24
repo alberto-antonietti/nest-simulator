@@ -258,7 +258,7 @@ template < typename targetidentifierT > inline void STDPSinExpConnection< target
 	double minus_dt = dopa_spikes[ dopa_spikes_idx_+1].spike_time_-1;
 	if (SpikeBuffer_.size()>0){
 		double LTD_amount = 0.0;
-		for(int GR = 0; GR<SpikeBuffer_.size(); GR++){
+		for(unsigned int GR = 0; GR<SpikeBuffer_.size(); GR++){
 			double sd= SpikeBuffer_[GR] - minus_dt;
 			if (sd < -200){
 				//SpikeBuffer_.erase(SpikeBuffer_.begin()+GR);

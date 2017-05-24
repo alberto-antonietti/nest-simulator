@@ -70,7 +70,6 @@ tau_syn_ex double - Time constant of the excitatory synaptic exponential
 tau_syn_in double - Time constant of the inhibitory synaptic exponential
                     function in ms.
 I_e        double - Constant external input current in pA.
-LTP		   double - LTP constant for heterosynaptic plasticity in nS
 
 Sends: SpikeEvent
 
@@ -164,7 +163,6 @@ private:
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double I_e;      //!< Constant Current in pA
-    double LTP;		 //!< LTP Constant for etherosynptic plasticity
 
     Parameters_(); //!< Sets default parameter values
 
@@ -293,6 +291,7 @@ inline port
 iaf_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type > 1 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
