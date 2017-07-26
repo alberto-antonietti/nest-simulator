@@ -354,15 +354,16 @@ extern const Name overwrite_files; //!< Used in io_manager
 
 extern const Name P; //!< specific to Hill & Tononi 2005
 extern const Name p; //!< current release probability  (Tsodyks2_connection)
-extern const Name p_copy;     //!< Specific to mip_generator
-extern const Name parent;     //!< Node parameter
-extern const Name phase;      //!< Signal phase in degrees
-extern const Name phi;        //!< Specific to mirollo_strogatz_ps
-extern const Name phi_th;     //!< Specific to mirollo_strogatz_ps
-extern const Name port;       //!< Connection parameters
-extern const Name ports;      //!< Recorder parameter
-extern const Name port_name;  //!< Parameters for MUSIC devices
-extern const Name port_width; //!< Parameters for MUSIC devices
+extern const Name p_copy;                //!< Specific to mip_generator
+extern const Name p_transmit;            //!< Specific to bernoulli_synapse
+extern const Name parent;                //!< Node parameter
+extern const Name phase;                 //!< Signal phase in degrees
+extern const Name phi;                   //!< Specific to mirollo_strogatz_ps
+extern const Name phi_th;                //!< Specific to mirollo_strogatz_ps
+extern const Name port;                  //!< Connection parameters
+extern const Name ports;                 //!< Recorder parameter
+extern const Name port_name;             //!< Parameters for MUSIC devices
+extern const Name port_width;            //!< Parameters for MUSIC devices
 extern const Name positive;
 extern const Name post_synaptic_element; //!< Post synaptic elements
 extern const Name potentials;            //!< Recorder parameter
@@ -557,7 +558,8 @@ extern const Name U_std;
 extern const Name U_upper;
 extern const Name update;      //!< Command to execute the neuron (sli_neuron)
 extern const Name update_node; //!< Command to execute the neuron (sli_neuron)
-extern const Name use_wfr;     //!< Simulation-related
+extern const Name use_gid_in_filename; //!< use gid in the filename
+extern const Name use_wfr;             //!< Simulation-related
 
 extern const Name V_act_NMDA; //!< specific to Hill & Tononi 2005
 extern const Name V_epsp;     //!< Specific to iaf_chs_2008 neuron
