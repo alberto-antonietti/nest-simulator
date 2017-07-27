@@ -24,7 +24,10 @@ set( models_sources
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
     aeif_cond_beta_multisynapse.h aeif_cond_beta_multisynapse.cpp
     aeif_cond_exp.h aeif_cond_exp.cpp
+    aeif_psc_alpha.h aeif_psc_alpha.cpp
+    aeif_psc_exp.h aeif_psc_exp.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
+    bernoulli_connection.h
     binary_neuron.h binary_neuron_impl.h
     cont_delay_connection.h cont_delay_connection_impl.h
     correlation_detector.h correlation_detector.cpp
@@ -96,7 +99,8 @@ set( models_sources
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
     volume_transmitter.h volume_transmitter.cpp
     volume_transmitter_alberto.h volume_transmitter_alberto.cpp
-	vogels_sprekeler_connection.h
+    vogels_sprekeler_connection.h
+    weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
     )
 

@@ -22,19 +22,19 @@
 
 /*
     This file is part of NEST.
-
     modelsmodule.cpp -- sets up the modeldict with all models included
     with the NEST distribution.
-
     Author(s):
     Marc-Oliver Gewaltig
     R"udiger Kupper
     Hans Ekkehard Plesser
-
     First Version: June 2006
 */
 
 #include "modelsmodule.h"
+
+// Includes from nestkernel
+#include "genericmodel_impl.h"
 
 // Generated includes:
 #include "config.h"
@@ -45,6 +45,8 @@
 #include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
+#include "aeif_psc_alpha.h"
+#include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -97,11 +99,13 @@
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
+#include "weight_recorder.h"
 
 #include "volume_transmitter.h"
 #include "volume_transmitter_alberto.h"
 
 // Prototypes for synapses
+#include "bernoulli_connection.h"
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
@@ -174,7 +178,9 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron" );
+  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
+    /* private_model */ false,
+    /* deprecation_info */ "NEST 3.0" );
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );
@@ -230,6 +236,8 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< spike_detector >(
     "spike_detector" );
+  kernel().model_manager.register_node_model< weight_recorder >(
+    "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >(
     "spin_detector" );
   kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
@@ -248,32 +256,26 @@ ModelsModule::init( SLIInterpreter* )
   /*BeginDocumentation
   Name: voltmeter - Device to record membrane potential from neurons.
   Synopsis: voltmeter Create
-
   Description:
   A voltmeter records the membrane potential (V_m) of connected nodes
   to memory, file or stdout.
-
   By default, voltmeters record values once per ms. Set the parameter
   /interval to change this. The recording interval cannot be smaller
   than the resolution.
-
   Results are returned in the /events entry of the status dictionary,
   which contains membrane potential as vector /V_m and pertaining
   times as vector /times and node GIDs as /senders, if /withtime and
   /withgid are set, respectively.
-
   Accumulator mode:
   Voltmeter can operate in accumulator mode. In this case, values for all
   recorded variables are added across all recorded nodes (but kept separate in
   time). This can be useful to record average membrane potential in a
   population.
-
   To activate accumulator mode, either set /to_accumulator to true, or set
   /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
   to memory, to screen, with GID or with weight. You must activate accumulator
   mode before simulating. Accumulator data is never written to file. You must
   extract it from the device using GetStatus.
-
   Remarks:
    - The voltmeter model is implemented as a multimeter preconfigured to
      record /V_m.
@@ -285,11 +287,9 @@ ModelsModule::init( SLIInterpreter* )
      you record from are frozen and others are not, data will only be collected
      from the unfrozen nodes. Most likely, this will lead to confusing results,
      so you should not use voltmeter with frozen nodes.
-
   Parameters:
        The following parameter can be set in the status dictionary:
        interval     double - Recording interval in ms
-
   Examples:
   SLI ] /iaf_cond_alpha Create /n Set
   SLI ] /voltmeter Create /vm Set
@@ -305,10 +305,7 @@ ModelsModule::init( SLIInterpreter* )
   V_m                      doublevectortype    <doublevectortype>
   --------------------------------------------------
   Total number of entries: 3
-
-
   Sends: DataLoggingRequest
-
   SeeAlso: Device, RecordingDevice, multimeter
   */
   DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
@@ -339,23 +336,26 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
     "gif_cond_exp_multisynapse" );
-#endif
 
-#ifdef HAVE_GSL
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_exp >(
     "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< aeif_psc_alpha >(
+    "aeif_psc_alpha" );
+  kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
   kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >(
     "aeif_cond_beta_multisynapse" );
-
-#endif
-  // This version of the AdEx model does not depend on GSL.
-  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
-    "aeif_cond_alpha_RK5" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
     "aeif_cond_alpha_multisynapse" );
+#endif
+
+  // This version of the AdEx model does not depend on GSL.
+  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
+    "aeif_cond_alpha_RK5",
+    /*private_model*/ false,
+    /*deprecation_info*/ "NEST 3.0" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC
@@ -374,13 +374,11 @@ ModelsModule::init( SLIInterpreter* )
   /* BeginDocumentation
      Name: static_synapse_hpc - Variant of static_synapse with low memory
      consumption.
-
      Description:
      hpc synapses store the target neuron in form of a 2 Byte index instead of
      an 8 Byte pointer. This limits the number of thread local neurons to
      65,536. No support for different receptor types. Otherwise identical to
      static_synapse.
-
      SeeAlso: synapsedict, static_synapse
   */
   kernel()
@@ -414,7 +412,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel()
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction", false );
+      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
 
 
   /* BeginDocumentation
@@ -604,9 +602,8 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
       "stdp_dopamine_synapse_hpc" );
-      
-      
-/* BeginDocumentation
+
+  /* BeginDocumentation
      Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
      with low memory
      consumption.
@@ -620,8 +617,15 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
+
+  /* BeginDocumentation
+     Name: bernoulli_synapse - Static synapse with stochastic transmission
+     SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
+  */
+  kernel()
+    .model_manager
+    .register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
+      "bernoulli_synapse" );
 }
-
-
 
 } // namespace nest

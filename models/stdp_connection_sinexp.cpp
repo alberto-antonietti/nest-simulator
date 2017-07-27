@@ -49,52 +49,32 @@ namespace nest
 
 STDPSinExpCommonProperties::STDPSinExpCommonProperties()
   : CommonSynapseProperties()
-  , vt_( 0 )
   , A_plus_( 1.0 )
   , A_minus_( 1.5 )
   , Wmin_( 0.0 )
   , Wmax_( 200.0 )
+  , vtC_ ( 0 )
 {
 }
 
 void STDPSinExpCommonProperties::get_status( DictionaryDatum& d ) const{
   CommonSynapseProperties::get_status( d );
 
-  if ( vt_ != 0 )
-    def< long_t >( d, "modulator", vt_->get_gid() );
-  else
-    def< long_t >( d, "modulator", -1 );
-
-  def< double_t >( d, "A_plus", A_plus_ );
-  def< double_t >( d, "A_minus", A_minus_ );
-  def< double_t >( d, "Wmin", Wmin_ );
-  def< double_t >( d, "Wmax", Wmax_ );
+  def< double >( d, "A_plus", A_plus_ );
+  def< double >( d, "A_minus", A_minus_ );
+  def< double >( d, "Wmin", Wmin_ );
+  def< double >( d, "Wmax", Wmax_ );
 }
 
 void STDPSinExpCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm ){
   CommonSynapseProperties::set_status( d, cm );
 
-  long_t vtgid;
-  if ( updateValue< long_t >( d, "vt", vtgid ) ){
-    vt_ = dynamic_cast< volume_transmitter_alberto* >( kernel().node_manager.get_node( vtgid ) );
 
-      
 
-    if ( vt_ == 0 )
-      throw BadProperty( "vt needs to be a Volume Transmitter" );
-  }
-
-  updateValue< double_t >( d, "A_plus", A_plus_ );
-  updateValue< double_t >( d, "A_minus", A_minus_ );
-  updateValue< double_t >( d, "Wmin", Wmin_ );
-  updateValue< double_t >( d, "Wmax", Wmax_ );
-}
-
-Node* STDPSinExpCommonProperties::get_node(){
-  if ( vt_ == 0 )
-    throw BadProperty( "No neuron has been assigned as the modulator of the synapse." );
-  else
-    return vt_;
+  updateValue< double >( d, "A_plus", A_plus_ );
+  updateValue< double >( d, "A_minus", A_minus_ );
+  updateValue< double >( d, "Wmin", Wmin_ );
+  updateValue< double >( d, "Wmax", Wmax_ );
 }
 
 } // End of namespace nest

@@ -109,7 +109,9 @@ private:
   void init_state_( const Node& proto);
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
+
+  librandom::RngPtr rng_;
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;
@@ -128,7 +130,8 @@ private:
     bool Positive_;   		//!< = True if the output goes to positive IO
     bool ToFile_;	  		//!< = True if the neuron writes the output files
     double Protocol_; 		//!< 1.0 EBCC, 2.0 VOR
-    double USOnset_;  		//!< in ms the relative onset of US (EBCC Protocol
+    double USOnset_;  		//!< in ms the relative onset of US (EBCC Protocol)
+    double USDuration_;	    //!< in ms the duration of the US (e.g. 100 ms) (EBCC Protocol)
     double TrialDuration_; 	//!< in ms the duration of each trial
     double Phase_;    		//!< indicates the number of trial when the Extinction begins
 
@@ -147,10 +150,9 @@ private:
     double OutputVariables_[2];			//!< actual Positive and Negative DCN Firing Rate
     std::ofstream OutputFile_;      	//!< OutputFile
     std::ofstream CRFile_;				//!< CRFIle
-    bool CRFlag_;						//!< becomes true when a CR is detecnted
+    bool CRFlag_;						//!< becomes true when a CR is detected
     int Trial_;							//!< counts the number of trials
   };
-  
   Buffers_ B_;
   Parameters_ P_;
   Variables_ V_;

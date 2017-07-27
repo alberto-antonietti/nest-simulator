@@ -52,7 +52,7 @@ namespace nest
 
 nest::closed_loop_neuron::Parameters_::Parameters_()
   : Gain_( 1.0 )    // adimensional
-  , NumDCN_( 36.0 )   // Number of DCN as output
+  , NumDCN_( 1.0 )   // Number of DCN as output
   , Positive_( true ) // Positive or Negative Neuron
   , ToFile_( false )  // If it writes the OutputFile.dat
 {
@@ -70,7 +70,8 @@ void nest::closed_loop_neuron::Parameters_::get( DictionaryDatum& d ) const {
   def< bool   >( d, names::to_file, ToFile_ );
   def< double >( d, names::protocol, Protocol_ );
   def< double >( d, names::Tstart, USOnset_ );
-  def< double >( d, names::Tstop, TrialDuration_ );
+  def< double >( d, names::Tstop, USDuration_ );
+  def< double >( d, names::Tduration, TrialDuration_ );
   def< double >( d, names::phase, Phase_ );
 }
 
@@ -83,7 +84,8 @@ void nest::closed_loop_neuron::Parameters_::set( const DictionaryDatum& d ){
   updateValue< bool   >( d, names::to_file, ToFile_ );
   updateValue< double >( d, names::protocol, Protocol_ );
   updateValue< double >( d, names::Tstart, USOnset_ );
-  updateValue< double >( d, names::Tstop, TrialDuration_ );
+  updateValue< double >( d, names::Tstop, USDuration_ );
+  updateValue< double >( d, names::Tduration, TrialDuration_ );
   updateValue< double >( d, names::phase, Phase_ );
 }
 
@@ -117,8 +119,7 @@ void nest::closed_loop_neuron::init_state_( const Node& proto ){
 void closed_loop_neuron::init_buffers_(){
   B_.spike_gids_.clear();
   Archiving_Node::clear_history();
-  //std::cout << "INIT BUFFERS FUNCTION - Closed_loop_neuron.cpp " << std::endl;
-}
+  }
 
 void nest::closed_loop_neuron::calibrate(){
   V_.DCNAvg_ = 0.0;
@@ -133,11 +134,11 @@ void nest::closed_loop_neuron::calibrate(){
 		V_.CRFile_.open("CR.dat");
   }
   V_.Trial_=0;
-  //std::cout << "CALIBRATE FUNCTION - Closed_loop_neuron.cpp " << std::endl;
+  rng_ = kernel().rng_manager.get_rng( get_thread() );
 }
 
 
-void closed_loop_neuron::update( Time const& origin, const long_t from, const long_t to ){
+void closed_loop_neuron::update( Time const& origin, const long from, const long to ){
   assert(to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   
@@ -147,11 +148,10 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
   V_.OutputVariables_[1]*=exp(-0.001/tau_time_constant);
   
 
-  for ( long_t lag = from; lag < to; ++lag ){
-    const ulong_t current_spikes_n = static_cast< ulong_t >( B_.spike_gids_.size() );
+  for ( long lag = from; lag < to; ++lag ){
+    const unsigned long current_spikes_n = static_cast< unsigned long >( B_.spike_gids_.size() );
     if ( current_spikes_n > 0 ){
-		//std::cout << "SPIKE VECTOR SIZE = " << current_spikes_n << std::endl;
-		for ( ulong_t i = 0; i < current_spikes_n; i++ ){
+		for ( unsigned long i = 0; i < current_spikes_n; i++ ){
 			if (B_.spike_gids_[i]<P_.FirstDCN_+(P_.NumDCN_)/2){ //POSITIVE DCN
 				V_.OutputVariables_[0]+=kernel_amplitude;
 			}
@@ -164,7 +164,6 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
 	V_.DCNBuffer_.erase(V_.DCNBuffer_.begin());
 	V_.DCNBuffer_.push_back(V_.OutputVariables_[0]-V_.OutputVariables_[1]);
 	V_.DCNAvg_=accumulate( V_.DCNBuffer_.begin(), V_.DCNBuffer_.end(), 0.0)/V_.DCNBuffer_.size();
-    //std::cout << "DCNAVG = " << V_.DCNAvg_ << " and buffer size = " << V_.DCNBuffer_.size() << std::endl;
     int t = origin.get_steps() + lag;
     double Error = 0.0;
     if (t % (int) P_.TrialDuration_ == 0 ){
@@ -176,7 +175,7 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
     
     //!< EBCC PROTOCOL - ACQUISITION AND EXTINCTION
     if (P_.Protocol_ == 1.0 && V_.Trial_<=P_.Phase_){ //EBCC ACQUISITION		
-		if ((t-(V_.Trial_-1)*P_.TrialDuration_) >= P_.USOnset_ && P_.Positive_){
+		if ((t-(V_.Trial_-1)*P_.TrialDuration_) >= P_.USOnset_ && (t-(V_.Trial_-1)*P_.TrialDuration_) < P_.USOnset_+P_.USDuration_ && P_.Positive_){
 			 if(!V_.CRFlag_)
 				Error = 1.0; //NO CR before
 			 else
@@ -227,7 +226,7 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
     
     
     if (P_.Positive_ && Error > 0.0){ //Positive Neuron and Positive Error
-		if (0.01*Error > static_cast <float> (rand()) / static_cast <float> (RAND_MAX)){
+		if (0.01*Error > rng_->drand()){
 			// When the error is max == 1, we have a mean firing rate equal to 10 Hz (max freq)
 			SpikeEvent se;
 			se.set_multiplicity( 1 );
@@ -236,7 +235,7 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
 		}
 	}
 	else if (!P_.Positive_ && Error < 0.0){
-		if (-0.01*Error > static_cast <float> (rand()) / static_cast <float> (RAND_MAX)){
+		if (-0.01*Error > rng_->drand()){
 			// When the error is max == -1, we have a mean firing rate equal to 10 Hz (max freq)
 			SpikeEvent se;
 			se.set_multiplicity( 1 );
@@ -251,8 +250,6 @@ void closed_loop_neuron::update( Time const& origin, const long_t from, const lo
 void closed_loop_neuron::handle( SpikeEvent& e ){
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() ){
-    //std::cout << "e.get_rport() = " << e.get_rport() << std::endl;
-    //std::cout <<  e.get_sender_gid() << std::endl;
     B_.spike_gids_.push_back(e.get_sender_gid());
   }
 }
