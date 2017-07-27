@@ -194,22 +194,22 @@ extern const Name first_dcn;
 extern const Name flush_after_simulate; //!< Recorder parameter
 extern const Name flush_records;        //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
-extern const Name frozen;               //!< Node parameter
+extern const Name frozen; //!< Node parameter
 
 <<<<<<< HEAD
 <<<<<<< HEAD
-extern const Name g;                    //!< Conductance
-extern const Name g_ahp;                //!< Specific to iaf_chxk_2008 neuron
-extern const Name g_ex;                 //!< Excitatory conductance
-extern const Name g_in;                 //!< inhibitory conductance
-extern const Name g_K;                  //!< Potassium conductance
-extern const Name g_Kv1;                //!< Kv1 Potassium conductance
-extern const Name g_Kv3;                //!< Kv3 Potassium conductance
-extern const Name g_L;                  //!< Leak conductance
-extern const Name g_Na;                 //!< Sodium conductance
-extern const Name g_rr;                 //!< Other adaptation
-extern const Name g_sfa;                //!< Other adaptation
-extern const Name gamma;                //!< Specific to mirollo_strogatz_ps
+extern const Name g;      //!< Conductance
+extern const Name g_ahp;  //!< Specific to iaf_chxk_2008 neuron
+extern const Name g_ex;   //!< Excitatory conductance
+extern const Name g_in;   //!< inhibitory conductance
+extern const Name g_K;    //!< Potassium conductance
+extern const Name g_Kv1;  //!< Kv1 Potassium conductance
+extern const Name g_Kv3;  //!< Kv3 Potassium conductance
+extern const Name g_L;    //!< Leak conductance
+extern const Name g_Na;   //!< Sodium conductance
+extern const Name g_rr;   //!< Other adaptation
+extern const Name g_sfa;  //!< Other adaptation
+extern const Name gamma;  //!< Specific to mirollo_strogatz_ps
 extern const Name
   gamma_shape; //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name gaussian;     //!< Parameter for MSP growth curves
@@ -359,7 +359,7 @@ extern const Name needs_prelim_update; //!< Node parameter
 extern const Name neuron;              //!< Node type
 extern const Name node_uses_wfr;       //!< Node parameter
 extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
-extern const Name ns;                  //!< Number of release sites (property arrays)
+extern const Name ns;          //!< Number of release sites (property arrays)
 extern const Name n_receptors; //!< number of receptor ports
 extern const Name n_synapses;
 extern const Name neuron;            //!< Node type
