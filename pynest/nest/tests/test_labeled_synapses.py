@@ -41,35 +41,6 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
         nest.SetDefaults('stdp_dopamine_synapse_lbl', {'vt': vol[1]})
         nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol[2]})
-	vol_a = nest.Create('volume_transmitter_alberto', 4)
-	nest.SetDefaults('stdp_synapse_cosexp', {'vt': vol_a[0]})
-	nest.SetDefaults('stdp_synapse_sinexp', {'vt': vol_a[1]})
-	nest.SetDefaults('stdp_synapse_cosexp_lbl', {'vt': vol_a[2]})
-	nest.SetDefaults('stdp_synapse_sinexp_lbl', {'vt': vol_a[3]})
-
-        self.rate_model_connections = [
-            'rate_connection_instantaneous',
-            'rate_connection_instantaneous_lbl',
-            'rate_connection_delayed',
-            'rate_connection_delayed_lbl'
-        ]
-
-        self.siegert_connections = [
-            'diffusion_connection',
-            'diffusion_connection_lbl'
-        ]
-
-        self.rate_model_connections = [
-            'rate_connection_instantaneous',
-            'rate_connection_instantaneous_lbl',
-            'rate_connection_delayed',
-            'rate_connection_delayed_lbl'
-        ]
-
-        self.siegert_connections = [
-            'diffusion_connection',
-            'diffusion_connection_lbl'
-        ]
 
         self.rate_model_connections = [
             'rate_connection_instantaneous',
