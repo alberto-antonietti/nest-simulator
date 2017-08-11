@@ -71,6 +71,18 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             'diffusion_connection_lbl'
         ]
 
+        self.rate_model_connections = [
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
+        ]
+
+        self.siegert_connections = [
+            'diffusion_connection',
+            'diffusion_connection_lbl'
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
