@@ -55,7 +55,13 @@ class TestDisconnectSingle(unittest.TestCase):
 	    'stdp_synapse_cosexp',
 	    'stdp_synapse_sinexp',
 	    'stdp_synapse_cosexp_lbl',
-	    'stdp_synapse_sinexp_lbl'
+	    'stdp_synapse_sinexp_lbl',
+            'diffusion_connection',
+            'diffusion_connection_lbl',
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
@@ -79,16 +85,14 @@ class TestDisconnectSingle(unittest.TestCase):
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
                 if mpi_test:
-                    connstotal = None
-                    conns = self.comm.allgather(conns, connstotal)
+                    conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
                 assert len(conns) == 1
                 nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
                 if mpi_test:
-                    connstotal = None
-                    conns = self.comm.allgather(conns, connstotal)
+                    conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
                 assert len(conns) == 0
 
@@ -96,8 +100,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 conns1 = nest.GetConnections(
                     [neurons[0]], [neurons[1]], syn_model)
                 if mpi_test:
-                    connstotal1 = None
-                    conns1 = self.comm.allgather(conns1, connstotal1)
+                    conns1 = self.comm.allgather(conns1)
                     conns1 = filter(None, conns1)
                 assert len(conns1) == 0
                 try:
