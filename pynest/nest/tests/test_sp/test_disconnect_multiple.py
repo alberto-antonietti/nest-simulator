@@ -40,7 +40,13 @@ class TestDisconnect(unittest.TestCase):
 	    'stdp_synapse_cosexp',
 	    'stdp_synapse_sinexp',
 	    'stdp_synapse_cosexp_lbl',
-	    'stdp_synapse_sinexp_lbl'
+	    'stdp_synapse_sinexp_lbl',
+            'diffusion_connection',
+            'diffusion_connection_lbl',
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):
