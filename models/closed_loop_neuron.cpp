@@ -73,6 +73,7 @@ void nest::closed_loop_neuron::Parameters_::get( DictionaryDatum& d ) const {
   def< double >( d, names::Tstop, USDuration_ );
   def< double >( d, names::Tduration, TrialDuration_ );
   def< double >( d, names::phase, Phase_ );
+  def< std::string >( d, names::filenames, FileDesired_ );
 }
 
 void nest::closed_loop_neuron::Parameters_::set( const DictionaryDatum& d ){
@@ -87,6 +88,7 @@ void nest::closed_loop_neuron::Parameters_::set( const DictionaryDatum& d ){
   updateValue< double >( d, names::Tstop, USDuration_ );
   updateValue< double >( d, names::Tduration, TrialDuration_ );
   updateValue< double >( d, names::phase, Phase_ );
+  updateValue< std::string >( d, names::filenames, FileDesired_ );
 }
 
 /* ----------------------------------------------------------------
@@ -127,6 +129,20 @@ void nest::closed_loop_neuron::calibrate(){
   V_.OutputVariables_[1] = 0.0; // NEGATIVE VARIABLE
   for (int i=0; i<50; i++)
 	V_.DCNBuffer_.push_back(0.0);
+  
+  if (P_.Protocol_ == 2.0){
+	  std::ifstream DesFile;
+	  double Val = 0.0;
+	  DesFile.open((P_.FileDesired_).c_str());
+	  if (DesFile.is_open() == false){
+		std::cout << "ERROR! Could not open the Desired Variable File" << std::endl;
+		return;
+	  }
+	  for (int i=0; i<P_.TrialDuration_*P_.USDuration_; i++){
+		DesFile >> Val; 
+		V_.DesValues_.push_back(Val);
+	  }
+  }
   V_.CRFlag_ = false;
   if (P_.ToFile_){
 	V_.OutputFile_.open("OutputFile.dat");
@@ -163,7 +179,8 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
 	
 	V_.DCNBuffer_.erase(V_.DCNBuffer_.begin());
 	V_.DCNBuffer_.push_back(V_.OutputVariables_[0]-V_.OutputVariables_[1]);
-	V_.DCNAvg_=accumulate( V_.DCNBuffer_.begin(), V_.DCNBuffer_.end(), 0.0)/V_.DCNBuffer_.size();
+	V_.DCNAvg_=accumulate( V_.DCNBuffer_.begin(), V_.DCNBuffer_.end(), 0.0 )
+						 /(V_.DCNBuffer_.size()*((P_.NumDCN_)/2));
     int t = origin.get_steps() + lag;
     double Error = 0.0;
     if (t % (int) P_.TrialDuration_ == 0 ){
@@ -175,20 +192,27 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
     
     //!< EBCC PROTOCOL - ACQUISITION AND EXTINCTION
     if (P_.Protocol_ == 1.0 && V_.Trial_<=P_.Phase_){ //EBCC ACQUISITION		
-		if ((t-(V_.Trial_-1)*P_.TrialDuration_) >= P_.USOnset_ && (t-(V_.Trial_-1)*P_.TrialDuration_) < P_.USOnset_+P_.USDuration_ && P_.Positive_){
+		if ((t-(V_.Trial_-1)*P_.TrialDuration_) >= P_.USOnset_
+		 && (t-(V_.Trial_-1)*P_.TrialDuration_) < P_.USOnset_+P_.USDuration_
+		 && P_.Positive_){
 			 if(!V_.CRFlag_)
 				Error = 1.0; //NO CR before
 			 else
 				Error = 0.5; //CR before
 		 }
 	}
-	else if (P_.Protocol_ == 1.0 && V_.Trial_>P_.Phase_){ //EBCC EXTINCTION
+	else if (P_.Protocol_ == 1.0 && V_.Trial_>P_.Phase_){
+		//EBCC EXTINCTION
 		Error = 0.0;
 	}
-	if (P_.Protocol_ == 1.0){ //EBCC ACQUISITION AND EXTINCTION
+	if (P_.Protocol_ == 1.0){
+		//EBCC ACQUISITION AND EXTINCTION
 		// CR DETECTION	
-		if ((t-(V_.Trial_-1)*P_.TrialDuration_)< P_.USOnset_ && V_.DCNAvg_ > P_.Gain_ && !V_.CRFlag_){
-			V_.CRFlag_ = true;
+		if ((t-(V_.Trial_-1)*P_.TrialDuration_)< P_.USOnset_
+		 && (t-(V_.Trial_-1)*P_.TrialDuration_)> (P_.USOnset_-200.0)
+		 && V_.DCNAvg_ > P_.Gain_
+		 && !V_.CRFlag_){
+			 V_.CRFlag_ = true;
 			if (P_.ToFile_){
 				V_.CRFile_ << t << std::endl;
 			}
@@ -198,21 +222,13 @@ void closed_loop_neuron::update( Time const& origin, const long from, const long
 	}
 	
 	//!< VOR PROTOCOL - ACQUISITION AND EXTINCTION
-	if (P_.Protocol_ == 2.0 && V_.Trial_<=P_.Phase_){ //VOR ACQUISITION
-		double Desired = sin(2.0*3.1415*t/1000.0);	
-		Error = Desired - V_.DCNAvg_*P_.Gain_;
-		if (P_.ToFile_)
-			V_.OutputFile_ << Desired << "\t" << V_.DCNAvg_*P_.Gain_ << "\t" << Error << std::endl;
-	}
-	else if (P_.Protocol_ == 2.0 && V_.Trial_>P_.Phase_){ //VOR EXTINCTION
-		double Desired = 0.0;	
+	if (P_.Protocol_ == 2.0){ //VOR ACQUISITION
+		double Desired = V_.DesValues_[t];	
 		Error = Desired - V_.DCNAvg_*P_.Gain_;
 		if (P_.ToFile_)
 			V_.OutputFile_ << Desired << "\t" << V_.DCNAvg_*P_.Gain_ << "\t" << Error << std::endl;
 	}
 	
-	
-    
 
     //!< Check that the Error variable ranges in [-1, 1]
     if (Error > 1.0){

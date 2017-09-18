@@ -132,9 +132,11 @@ private:
     double Protocol_; 		//!< 1.0 EBCC, 2.0 VOR
     double USOnset_;  		//!< in ms the relative onset of US (EBCC Protocol)
     double USDuration_;	    //!< in ms the duration of the US (e.g. 100 ms) (EBCC Protocol)
+							//!< is the total number of trials (VOR Protocol)
     double TrialDuration_; 	//!< in ms the duration of each trial
-    double Phase_;    		//!< indicates the number of trial when the Extinction begins
-
+    double Phase_;    		//!< indicates the number of trial when the Extinction begins (EBCC and VOR Protocols)
+	std::string FileDesired_; //!< indicates the Path of the File with the Desired Trajectory (VOR Protocol)
+	
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -146,7 +148,8 @@ private:
    */
   struct Variables_{
     double DCNAvg_; 					//!< the actual value of the DCNAvg
-    std::vector< double > DCNBuffer_; 	//!< store the DCNBuffer for the mobile window average
+    std::vector< double > DCNBuffer_; 	//!< stores the DCNBuffer for the mobile window average
+    std::vector< double > DesValues_;    //!< stores the Desired Values of Trajectory (VOR Protocol)
     double OutputVariables_[2];			//!< actual Positive and Negative DCN Firing Rate
     std::ofstream OutputFile_;      	//!< OutputFile
     std::ofstream CRFile_;				//!< CRFIle
