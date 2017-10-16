@@ -74,6 +74,7 @@
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
 #include "closed_loop_neuron.h"
+#include "radial_basis_function_input.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
@@ -217,6 +218,8 @@ ModelsModule::init( SLIInterpreter* )
     "parrot_neuron" );
   kernel().model_manager.register_node_model< closed_loop_neuron >(
     "closed_loop_neuron" );
+  kernel().model_manager.register_node_model< radial_basis_function_input >(
+    "radial_basis_function_input" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
     "pp_pop_psc_delta" );
