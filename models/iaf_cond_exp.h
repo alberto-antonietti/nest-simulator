@@ -290,7 +290,7 @@ nest::iaf_cond_exp::send_test_event( Node& target,
 inline port
 iaf_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type > 1 )
+  if ( receptor_type != 0 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

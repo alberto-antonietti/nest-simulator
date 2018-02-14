@@ -772,7 +772,7 @@ public:
     double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
-	synindex syn_id = C_[ 0 ].get_syn_id();
+    synindex syn_id = C_[ 0 ].get_syn_id();
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
            .get_vt_gid() == vt_gid
