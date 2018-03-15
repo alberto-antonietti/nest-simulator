@@ -98,6 +98,7 @@ set( models_sources
     spin_detector.h spin_detector.cpp
     static_connection.h
     static_connection_hom_w.h
+    stdp_connection.h
     stdp_connection_sinexp.h stdp_connection_sinexp.cpp
     stdp_connection_cosexp.h stdp_connection_cosexp.cpp
     stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h

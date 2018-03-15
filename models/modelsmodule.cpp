@@ -22,12 +22,15 @@
 
 /*
     This file is part of NEST.
+
     modelsmodule.cpp -- sets up the modeldict with all models included
     with the NEST distribution.
+
     Author(s):
     Marc-Oliver Gewaltig
     R"udiger Kupper
     Hans Ekkehard Plesser
+
     First Version: June 2006
 */
 
@@ -75,6 +78,7 @@
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
 #include "closed_loop_neuron.h"
+#include "radial_basis_function_input.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
@@ -244,6 +248,8 @@ ModelsModule::init( SLIInterpreter* )
     "parrot_neuron" );
   kernel().model_manager.register_node_model< closed_loop_neuron >(
     "closed_loop_neuron" );
+  kernel().model_manager.register_node_model< radial_basis_function_input >(
+    "radial_basis_function_input" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
     "pp_pop_psc_delta" );
@@ -303,26 +309,32 @@ ModelsModule::init( SLIInterpreter* )
   /*BeginDocumentation
   Name: voltmeter - Device to record membrane potential from neurons.
   Synopsis: voltmeter Create
+
   Description:
   A voltmeter records the membrane potential (V_m) of connected nodes
   to memory, file or stdout.
+
   By default, voltmeters record values once per ms. Set the parameter
   /interval to change this. The recording interval cannot be smaller
   than the resolution.
+
   Results are returned in the /events entry of the status dictionary,
   which contains membrane potential as vector /V_m and pertaining
   times as vector /times and node GIDs as /senders, if /withtime and
   /withgid are set, respectively.
+
   Accumulator mode:
   Voltmeter can operate in accumulator mode. In this case, values for all
   recorded variables are added across all recorded nodes (but kept separate in
   time). This can be useful to record average membrane potential in a
   population.
+
   To activate accumulator mode, either set /to_accumulator to true, or set
   /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
   to memory, to screen, with GID or with weight. You must activate accumulator
   mode before simulating. Accumulator data is never written to file. You must
   extract it from the device using GetStatus.
+
   Remarks:
    - The voltmeter model is implemented as a multimeter preconfigured to
      record /V_m.
@@ -334,9 +346,11 @@ ModelsModule::init( SLIInterpreter* )
      you record from are frozen and others are not, data will only be collected
      from the unfrozen nodes. Most likely, this will lead to confusing results,
      so you should not use voltmeter with frozen nodes.
+
   Parameters:
        The following parameter can be set in the status dictionary:
        interval     double - Recording interval in ms
+
   Examples:
   SLI ] /iaf_cond_alpha Create /n Set
   SLI ] /voltmeter Create /vm Set
@@ -352,7 +366,10 @@ ModelsModule::init( SLIInterpreter* )
   V_m                      doublevectortype    <doublevectortype>
   --------------------------------------------------
   Total number of entries: 3
+
+
   Sends: DataLoggingRequest
+
   SeeAlso: Device, RecordingDevice, multimeter
   */
   DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
@@ -429,11 +446,13 @@ ModelsModule::init( SLIInterpreter* )
   /* BeginDocumentation
      Name: static_synapse_hpc - Variant of static_synapse with low memory
      consumption.
+
      Description:
      hpc synapses store the target neuron in form of a 2 Byte index instead of
      an 8 Byte pointer. This limits the number of thread local neurons to
      65,536. No support for different receptor types. Otherwise identical to
      static_synapse.
+
      SeeAlso: synapsedict, static_synapse
   */
   kernel()

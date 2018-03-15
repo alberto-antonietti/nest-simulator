@@ -89,7 +89,7 @@ public:
   closed_loop_neuron();
   closed_loop_neuron( const closed_loop_neuron& );
   ~closed_loop_neuron();
-  
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding,
@@ -101,12 +101,12 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
   void handle( SpikeEvent& );
   port handles_test_event( SpikeEvent&, rport );
-  
+
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto);
+  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long, const long );
@@ -117,65 +117,84 @@ private:
      Buffers and accumulates the number of incoming spikes per time step;
      RingBuffer stores doubles; for now the numbers are casted.
   */
-  struct Buffers_{
+  struct Buffers_
+  {
     std::vector< double > spike_gids_;
   };
-  
+
 
   //! Model parameters
-  struct Parameters_{
-    double Gain_;     		//!< Gain to multiply the output for VOR - CR_Threshold for EBCC
-    double NumDCN_;   		//!< Total Number of DCN connected to the Closed_loop_neuron
-    double FirstDCN_; 		//!< The number (GID) of the First DCN
-    bool Positive_;   		//!< = True if the output goes to positive IO
-    bool ToFile_;	  		//!< = True if the neuron writes the output files
-    double Protocol_; 		//!< 1.0 EBCC, 2.0 VOR
-    double USOnset_;  		//!< in ms the relative onset of US (EBCC Protocol)
-    double USDuration_;	    //!< in ms the duration of the US (e.g. 100 ms) (EBCC Protocol)
-    double TrialDuration_; 	//!< in ms the duration of each trial
-    double Phase_;    		//!< indicates the number of trial when the Extinction begins
+  struct Parameters_
+  {
+    double
+      Gain_; //!< Gain to multiply the output for VOR - CR_Threshold for EBCC
+    double NumDCN_; //!< Total Number of DCN connected to the Closed_loop_neuron
+    double FirstDCN_;      //!< The number (GID) of the First DCN
+    bool Positive_;        //!< = True if the output goes to positive IO
+    bool ToFile_;          //!< = True if the neuron writes the output files
+    double Protocol_;      //!< 1.0 EBCC, 2.0 VOR
+    double USOnset_;       //!< in ms the relative onset of US (EBCC Protocol)
+    double USDuration_;    //!< in ms the duration of the US (e.g. 100 ms) (EBCC
+                           //Protocol)
+                           //!< is the total number of trials (VOR Protocol)
+    double TrialDuration_; //!< in ms the duration of each trial
+    double Phase_; //!< indicates the number of trial when the Extinction begins
+                   //(EBCC and VOR Protocols)
+    std::string FileDesired_; //!< indicates the Path of the File with the
+                              //Desired Trajectory (VOR Protocol)
 
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dicitonary
   };
-  
+
   /**
    * Internal variables of the model.
    */
-  struct Variables_{
-    double DCNAvg_; 					//!< the actual value of the DCNAvg
-    std::vector< double > DCNBuffer_; 	//!< store the DCNBuffer for the mobile window average
-    double OutputVariables_[2];			//!< actual Positive and Negative DCN Firing Rate
-    std::ofstream OutputFile_;      	//!< OutputFile
-    std::ofstream CRFile_;				//!< CRFIle
-    bool CRFlag_;						//!< becomes true when a CR is detected
-    int Trial_;							//!< counts the number of trials
+  struct Variables_
+  {
+    double DCNAvg_; //!< the actual value of the DCNAvg
+    std::vector< double >
+      DCNBuffer_; //!< stores the DCNBuffer for the mobile window average
+    std::vector< double >
+      DesValues_; //!< stores the Desired Values of Trajectory (VOR Protocol)
+    double
+      OutputVariables_[ 2 ];   //!< actual Positive and Negative DCN Firing Rate
+    std::ofstream OutputFile_; //!< OutputFile
+    std::ofstream CRFile_;     //!< CRFIle
+    bool CRFlag_;              //!< becomes true when a CR is detected
+    int Trial_;                //!< counts the number of trials
   };
   Buffers_ B_;
   Parameters_ P_;
   Variables_ V_;
-
-
 };
 
-inline port closed_loop_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool ){
+inline port
+closed_loop_neuron::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
+{
   SpikeEvent e;
   e.set_sender( *this );
 
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port closed_loop_neuron::handles_test_event( SpikeEvent&, rport receptor_type ) {
-  // Allow connections only to port 0 
-  if ( receptor_type == 0)
+inline port
+closed_loop_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
+{
+  // Allow connections only to port 0
+  if ( receptor_type == 0 )
     return receptor_type;
   else
     throw UnknownReceptorType( receptor_type, get_name() );
 }
 
-inline void closed_loop_neuron::get_status( DictionaryDatum& d ) const
+inline void
+closed_loop_neuron::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   Archiving_Node::get_status( d );
@@ -183,11 +202,12 @@ inline void closed_loop_neuron::get_status( DictionaryDatum& d ) const
   //( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
-inline void closed_loop_neuron::set_status( const DictionaryDatum& d )
+inline void
+closed_loop_neuron::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
-  
+
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
@@ -196,7 +216,7 @@ inline void closed_loop_neuron::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-  }
+}
 
 } // namespace
 

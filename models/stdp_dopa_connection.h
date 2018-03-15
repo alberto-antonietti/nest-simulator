@@ -24,8 +24,10 @@
 #define STDP_DOPA_CONNECTION_H
 
 /* BeginDocumentation
+
    Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
                                  spike-timing dependent plasticity.
+
    Description:
    stdp_dopamine_synapse is a connection to create synapses with
    dopamine-modulated spike-timing dependent plasticity (used as a
@@ -34,6 +36,7 @@
    of neurons. The spikes emitted by the pool of dopamine neurons are
    delivered to the synapse via the assigned volume transmitter. The
    dopaminergic dynamics is calculated in the synapse itself.
+
    Examples:
    /volume_transmitter Create /vol Set
    /iaf_psc_alpha Create /pre_neuron Set
@@ -42,6 +45,7 @@
    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
    neuromod_neuron vol Connect
    pre_neuron post_neuron /stdp_dopamine_synapse Connect
+
    Parameters:
      Common properties:
            vt        long   - ID of volume_transmitter collecting the spikes
@@ -57,12 +61,15 @@
            b         double - Dopaminergic baseline concentration
            Wmin      double - Minimal synaptic weight
            Wmax      double - Maximal synaptic weight
+
      Individual properties:
            c         double - eligibility trace
            n         double - neuromodulator concentration
+
    Remarks:
      The common properties can only be set by SetDefaults and apply to all
      synapses of the model.
+
    References:
    [1] Potjans W, Morrison A and Diesmann M (2010). Enabling
        functional neural circuit simulations with distributed
@@ -71,11 +78,14 @@
    [2] Izhikevich, E.M. (2007). Solving the distal reward problem
        through linkage of STDP and dopamine signaling. Cereb. Cortex,
        17(10), 2443-2452.
+
    Transmits: SpikeEvent
+
    Author: Susanne Kunkel
    Remarks:
    - based on an earlier version by Wiebke Potjans
    - major changes to code after code revision in Apr 2013
+
    SeeAlso: volume_transmitter
 */
 
