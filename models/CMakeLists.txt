@@ -76,7 +76,9 @@ set( models_sources
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
-	  closed_loop_neuron.h closed_loop_neuron.cpp
+    inhomogeneous_poisson_generator.h inhomogeneous_poisson_generator.cpp
+    closed_loop_neuron.h closed_loop_neuron.cpp
+    radial_basis_function_input.h radial_basis_function_input.cpp
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp
