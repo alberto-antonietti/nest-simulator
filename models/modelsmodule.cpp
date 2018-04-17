@@ -66,6 +66,7 @@
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
+#include "iaf_psc_alpha_gap.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_delta.h"
 #include "iaf_psc_exp.h"
@@ -234,6 +235,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_gap >(
+    "iaf_psc_alpha_gap" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >(
     "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_delta >(
@@ -488,19 +491,19 @@ ModelsModule::init( SLIInterpreter* )
   kernel()
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
+      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true, /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-      "rate_connection_instantaneous", /*has_delay=*/false );
+      "rate_connection_instantaneous", /*has_delay=*/false, /*requires_symmetric=*/false, /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-      "rate_connection_delayed" );
+      "rate_connection_delayed", /*has_delay=*/true, /*requires_symmetric=*/false, /*supports_wfr=*/false );
   kernel()
     .model_manager
     .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-      "diffusion_connection", /*has_delay=*/false );
+      "diffusion_connection", /*has_delay=*/false, /*requires_symmetric=*/false, /*supports_wfr=*/true );
 
 
   /* BeginDocumentation
@@ -714,6 +717,9 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
       "bernoulli_synapse" );
+
+  // resize all connection tables to number of registered synapses
+  kernel().connection_manager.resize_connections();
 }
 
 } // namespace nest

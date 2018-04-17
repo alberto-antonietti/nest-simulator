@@ -82,6 +82,11 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
+  // subnet does not require local id; needs to be defined here to
+  // avoid exception in node_manager::add_node
+  void set_local_device_id( const index ldid ) {}
+  index get_local_device_id() const { return invalid_index; }
+
   bool has_proxies() const;
 
   size_t global_size() const; //!< Returns total number of children.
@@ -242,7 +247,7 @@ Subnet::add_node( Node* n )
 {
   const index lid = gids_.size();
   const index mid = n->get_model_id();
-  if ( ( homogeneous_ ) && ( lid > 0 ) )
+  if ( ( homogeneous_ ) and ( lid > 0 ) )
   {
     if ( mid != last_mid_ )
     {
@@ -265,7 +270,7 @@ inline index
 Subnet::add_remote_node( index gid, index mid )
 {
   const index lid = gids_.size();
-  if ( ( homogeneous_ ) && ( lid > 0 ) )
+  if ( ( homogeneous_ ) and ( lid > 0 ) )
   {
     if ( mid != last_mid_ )
     {

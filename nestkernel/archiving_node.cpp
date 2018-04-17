@@ -84,9 +84,7 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
-        runner != history_.end()
-          && ( t_first_read - runner->t_ > -1.0
-                 * kernel().connection_manager.get_stdp_eps() );
+        runner != history_.end() and runner->t_ <= t_first_read;
         ++runner )
   {
     ( runner->access_counter_ )++;
@@ -164,16 +162,12 @@ nest::Archiving_Node::get_history( double t1,
   else
   {
     std::deque< histentry >::iterator runner = history_.begin();
-    while ( ( runner != history_.end() )
-      && ( t1 - runner->t_ > -1.0
-                * kernel().connection_manager.get_stdp_eps() ) )
+    while ( ( runner != history_.end() ) and ( runner->t_ <= t1 ) )
     {
       ++runner;
     }
     *start = runner;
-    while ( ( runner != history_.end() )
-      && ( t2 - runner->t_ > -1.0
-                * kernel().connection_manager.get_stdp_eps() ) )
+    while ( ( runner != history_.end() ) and ( runner->t_ <= t2 ) )
     {
       ( runner->access_counter_ )++;
       ++runner;
@@ -262,7 +256,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_Ca, new_tau_Ca );
   updateValue< double >( d, names::beta_Ca, new_beta_Ca );
 
-  if ( new_tau_minus <= 0.0 || new_tau_minus_triplet <= 0.0 )
+  if ( new_tau_minus <= 0.0 or new_tau_minus_triplet <= 0.0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
