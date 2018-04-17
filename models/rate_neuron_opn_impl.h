@@ -422,13 +422,13 @@ nest::rate_neuron_opn< TNonlinearities >::handle(
       if ( e.get_weight() >= 0.0 )
       {
         B_.delayed_rates_ex_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_delay() + i,
           e.get_weight() * e.get_coeffvalue( it ) );
       }
       else
       {
         B_.delayed_rates_in_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_delay() + i,
           e.get_weight() * e.get_coeffvalue( it ) );
       }
     }
@@ -437,13 +437,13 @@ nest::rate_neuron_opn< TNonlinearities >::handle(
       if ( e.get_weight() >= 0.0 )
       {
         B_.delayed_rates_ex_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_delay() + i,
           e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
       else
       {
         B_.delayed_rates_in_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_delay() + i,
           e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }

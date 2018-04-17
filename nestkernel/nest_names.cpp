@@ -61,6 +61,9 @@ const Name b( "b" );
 const Name beta( "beta" );
 const Name beta_Ca( "beta_Ca" );
 const Name binary( "binary" );
+const Name buffer_size_spike_data( "buffer_size_spike_data" );
+const Name buffer_size_target_data( "buffer_size_target_data" );
+const Name buffer_size_secondary_events( "buffer_size_secondary_events" );
 
 const Name c( "c" );
 const Name c_1( "c_1" );
@@ -188,6 +191,8 @@ const Name global_id( "global_id" );
 const Name grng( "grng" );
 const Name grng_seed( "grng_seed" );
 const Name growth_curve( "growth_curve" );
+const Name growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
+const Name growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const Name growth_rate( "growth_rate" );
 const Name gsl_error_tol( "gsl_error_tol" );
 
@@ -223,6 +228,7 @@ const Name Interpol_Order( "Interpol_Order" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );
 
+const Name keep_source_table( "keep_source_table" );
 const Name Kplus( "Kplus" );
 const Name Kplus_triplet( "Kplus_triplet" );
 
@@ -243,6 +249,8 @@ const Name lookuptable_1( "lookuptable_1" );
 const Name lookuptable_2( "lookuptable_2" );
 
 const Name make_symmetric( "make_symmetric" );
+const Name max_buffer_size_spike_data( "max_buffer_size_spike_data" );
+const Name max_buffer_size_target_data( "max_buffer_size_target_data" );
 const Name max_delay( "max_delay" );
 const Name MAXERR( "MAXERR" );
 const Name mean( "mean" );
@@ -359,6 +367,7 @@ const Name size_of( "sizeof" );
 const Name soma_curr( "soma_curr" );
 const Name soma_exc( "soma_exc" );
 const Name soma_inh( "soma_inh" );
+const Name sort_connections_by_source( "sort_connections_by_source" );
 const Name source( "source" );
 const Name spike( "spike" );
 const Name spike_multiplicities( "spike_multiplicities" );

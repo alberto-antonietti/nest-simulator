@@ -1,5 +1,5 @@
 /*
- *  connector_base.cpp
+ *  device_node.h
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,51 @@
  *
  */
 
-#include "connector_base.h"
+#ifndef DEVICE_NODE_H
+#define DEVICE_NODE_H
+
+// Includes from nestkernel:
+#include "node.h"
 
 namespace nest
 {
 
-ConnectorBase::ConnectorBase()
-  : t_lastspike_( 0. )
+/**
+ * Base class for device objects.
+ */
+class DeviceNode : public Node
 {
+
+public:
+  DeviceNode()
+    : Node()
+    , local_device_id_( invalid_index )
+  {}
+
+  DeviceNode( DeviceNode const& dn )
+    : Node( dn )
+    , local_device_id_( invalid_index )
+  {}
+
+  void set_local_device_id( const index ldid );
+  index get_local_device_id() const;
+
+protected:
+  index local_device_id_;
+};
+
+inline void
+DeviceNode::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
 }
 
-} // namespace nest
+inline index
+DeviceNode::get_local_device_id() const
+{
+  return local_device_id_;
+}
+
+} // namespace
+
+#endif /* #ifndef DEVICE_NODE_H */

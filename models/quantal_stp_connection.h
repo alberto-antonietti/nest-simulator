@@ -134,13 +134,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -159,7 +155,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -180,6 +175,7 @@ private:
   double tau_fac_; //!< [ms] time constant for facilitation (F)
   int n_;          //!< Number of release sites
   int a_;          //!< Number of available release sites
+  double t_lastspike_; //!< Time point of last spike emitted
 };
 
 
@@ -187,17 +183,17 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param t The thread on which this connection is stored.
- * \param t_lastspike Time point of last spike emitted
  * \param cp Common properties object, containing the quantal_stp parameters.
  */
 template < typename targetidentifierT >
 inline void
 Quantal_StpConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double t_lastspike,
   const CommonSynapseProperties& )
 {
-  const double h = e.get_stamp().get_ms() - t_lastspike;
+  const int vp = get_target( t )->get_vp();
+  const double t_spike = e.get_stamp().get_ms();
+  const double h = t_spike - t_lastspike_;
 
   // Compute the decay factors, based on the time since the last spike.
   const double p_decay = std::exp( -h / tau_rec_ );
@@ -235,6 +231,8 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
     e();
     a_ -= n_release;
   }
+
+  t_lastspike_ = t_spike;
 }
 
 } // namespace
