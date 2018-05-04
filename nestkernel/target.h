@@ -63,9 +63,9 @@ private:
 
   // maximal sizes are determined by bitshifts
   static const int max_lcid_ = 134217728; // 2 ** 27
-  static const int max_rank_ = 1048576; // 2 ** 20
-  static const int max_tid_ = 1024; // 2 ** 10
-  static const int max_syn_id_ = 64; // 2 ** 6
+  static const int max_rank_ = 1048576;   // 2 ** 20
+  static const int max_tid_ = 1024;       // 2 ** 10
+  static const int max_syn_id_ = 64;      // 2 ** 6
 
 public:
   Target();
@@ -74,21 +74,65 @@ public:
     const thread rank,
     const synindex syn_id,
     const index lcid );
+
+  /**
+   * Sets the local connection ID.
+   */
   void set_lcid( const size_t lcid );
+
+  /**
+   * Returns the local connection ID.
+   */
   size_t get_lcid() const;
+
+  /**
+   * Sets the rank.
+   */
   void set_rank( const unsigned int rank );
+
+  /**
+   * Returns the rank.
+   */
   unsigned int get_rank() const;
+
+  /**
+   * Sets the target ID.
+   */
   void set_tid( const unsigned int tid );
+
+  /**
+   * Returns the target ID.
+   */
   unsigned int get_tid() const;
+
+  /**
+   * Sets the synapse-type ID.
+   */
   void set_syn_id( const unsigned char syn_id );
+
+  /**
+   * Returns the synapse-type ID.
+   */
   unsigned char get_syn_id() const;
+
+  /**
+   * Sets whether Target is processed.
+   */
   void set_is_processed( const bool processed );
+
+  /**
+   * Returns whether Target is processed.
+   */
   bool is_processed() const;
+
+  /**
+   * Returns offset.
+   */
   double get_offset() const;
 };
 
 //!< check legal size
-typedef StaticAssert<sizeof(Target) == 8>::success success_target_size;
+typedef StaticAssert< sizeof( Target ) == 8 >::success success_target_size;
 
 inline Target::Target()
   : data_( 0 )

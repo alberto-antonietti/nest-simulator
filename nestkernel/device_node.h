@@ -29,6 +29,9 @@
 namespace nest
 {
 
+/**
+ * Base class for device objects.
+ */
 class DeviceNode : public Node
 {
 
@@ -36,12 +39,14 @@ public:
   DeviceNode()
     : Node()
     , local_device_id_( invalid_index )
-  {}
+  {
+  }
 
   DeviceNode( DeviceNode const& dn )
     : Node( dn )
     , local_device_id_( invalid_index )
-  {}
+  {
+  }
 
   void set_local_device_id( const index ldid );
   index get_local_device_id() const;

@@ -23,27 +23,37 @@
 #ifndef STATIC_ASSERT
 #define STATIC_ASSERT
 
-namespace nest {
+namespace nest
+{
 
-// Compile time assertions
-// use:
-// static const StaticAssert<bool-test>::success unique-var-name;
-//   or
-// typedef StaticAssert<bool-test>::sucess unique-type-name;
-//
-// Does nothing if the bool-test is true,
-//
-// if bool-test is false,
-// fails to compile because success is not defined
-
-template<bool>
-struct StaticAssert {};
-
-template<>
-struct StaticAssert<true> {
-    struct success {};
+/**
+ * Compile time assertions.
+ * Usage:
+ * \code
+ * static const StaticAssert<bool-test>::success unique-var-name;
+ * \endcode
+ *
+ * or
+ *
+ * \code
+ * typedef StaticAssert<bool-test>::sucess unique-type-name;
+ * \endcode
+ *
+ * Allows compilation if the bool-test is true. If bool-test is false,
+ * fails to compile because success is not defined.
+ */
+template < bool >
+struct StaticAssert
+{
 };
 
+template <>
+struct StaticAssert< true >
+{
+  struct success
+  {
+  };
+};
 }
 
-#endif //STATIC_ASSERT
+#endif // STATIC_ASSERT

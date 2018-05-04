@@ -155,7 +155,8 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
-  void update_connection_infrastructure( const thread tid ); //!< sort source table and connections and create new target table
+  //! Sorts source table and connections and create new target table.
+  void update_connection_infrastructure( const thread tid );
 
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
@@ -191,14 +192,12 @@ private:
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
 
-#ifndef DISABLE_TIMING
   Stopwatch sw_prepare;
   Stopwatch sw_simulate;
   Stopwatch sw_restructure;
   Stopwatch sw_sort;
   Stopwatch sw_total;
   Stopwatch sw_update;
-#endif
 };
 
 inline Time const&

@@ -33,7 +33,7 @@ namespace nest
 {
 
 /**
- * A data structure that stores the global id of a presynaptic neuron
+ * Stores the global id of a presynaptic neuron
  * and the number of local targets, along with a flag, whether this
  * entry has been processed yet. Used in SourceTable.
  */
@@ -41,22 +41,48 @@ class Source
 {
 private:
   unsigned long gid_ : 62; //!< gid of source
-  bool processed_ : 1; //!< whether this target has already been moved
-                       //!to the MPI buffer
+  bool processed_ : 1;     //!< whether this target has already been moved
+                           //!to the MPI buffer
   bool primary_ : 1;
   static const size_t disabled_marker_ = 4611686018427387904 - 1; // 2 ** 62 - 1
 
 public:
   Source();
   explicit Source( const index gid, const bool primary );
+
+  /**
+   * Sets gid_ to the specified value.
+   */
   void set_gid( const index gid );
+
+  /**
+   * Returns this Source's GID.
+   */
   index get_gid() const;
+
   void set_processed( const bool processed );
   bool is_processed() const;
+
+  /**
+   * Sets whether Source is primary.
+   */
   void set_primary( const bool primary );
+
+  /**
+   * Returns whether Source is primary.
+   */
   bool is_primary() const;
+
+  /**
+   * Disables Source.
+   */
   void disable();
+
+  /**
+   * Returns whether Source is disabled.
+   */
   bool is_disabled() const;
+
   friend bool operator<( const Source& lhs, const Source& rhs );
   friend bool operator>( const Source& lhs, const Source& rhs );
   friend bool operator==( const Source& lhs, const Source& rhs );

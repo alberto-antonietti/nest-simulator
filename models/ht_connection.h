@@ -157,7 +157,7 @@ private:
 
   double p_; //!< current pool size
 
-  double t_lastspike_;
+  double t_lastspike_; //!< Time point of last spike emitted
 };
 
 
@@ -174,7 +174,7 @@ HTConnection< targetidentifierT >::send( Event& e,
 {
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
   double t_spike = e.get_stamp().get_ms();
-  const double h =  t_spike - t_lastspike_;
+  const double h = t_spike - t_lastspike_;
   p_ = 1 - ( 1 - p_ ) * std::exp( -h / tau_P_ );
 
   // send the spike to the target

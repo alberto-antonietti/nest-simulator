@@ -65,11 +65,7 @@ ConnectionManager::send_5g( const thread tid,
   const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
-  ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
-    syn_id,
-    lcid,
-    cm,
-    e );
+  ( *connections_5g_[ tid ] )[ syn_id ]->send( tid, syn_id, lcid, cm, e );
 }
 
 inline void
@@ -96,7 +92,6 @@ ConnectionManager::restructure_connection_tables( const thread tid )
   assert( not source_table_.is_cleared() );
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );
-  // TODO@5g: keep in order to only sort newly create connections?
   source_table_.reset_last_sorted_source( tid );
 }
 
@@ -106,7 +101,8 @@ ConnectionManager::set_has_source_subsequent_targets( const thread tid,
   const index lcid,
   const bool subsequent_targets )
 {
-  ( *connections_5g_[ tid ] )[ syn_id ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
+  ( *connections_5g_[ tid ] )[ syn_id ]->set_has_source_subsequent_targets(
+    lcid, subsequent_targets );
 }
 
 } // namespace nest

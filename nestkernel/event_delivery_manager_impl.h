@@ -100,7 +100,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
   // Put the spike in a buffer for the remote machines
   const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
   const std::vector< Target >& targets =
-    kernel().connection_manager.get_targets( tid, lid );
+    kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin();
         it != targets.end();
@@ -123,7 +123,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid,
   // Put the spike in a buffer for the remote machines
   const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
   const std::vector< Target >& targets =
-    kernel().connection_manager.get_targets( tid, lid );
+    kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin();
         it != targets.end();
@@ -150,10 +150,12 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
   // considered
   const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
   for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin();
-        cit != supported_syn_ids.end(); ++cit )
+        cit != supported_syn_ids.end();
+        ++cit )
   {
     const std::vector< size_t >& positions =
-      kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
+      kernel().connection_manager.get_secondary_send_buffer_positions(
+        tid, lid, *cit );
 
     for ( size_t i = 0; i < positions.size(); ++i )
     {

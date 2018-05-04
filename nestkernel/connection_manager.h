@@ -107,13 +107,13 @@ public:
    * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
    * numerics::nan indicates this and weight/delay are set only, if they are
-   *valid.
+   * valid.
    *
    * \param sgid GID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   * \param params parameter dict to configure the synapse
+   * \param syn_id The synapse model to use.
+   * \param params Parameter dictionary to configure the synapse.
    * \param delay Delay of the connection (in ms).
    * \param weight Weight of the connection.
    */
@@ -131,12 +131,14 @@ public:
    * established on the thread/process that owns the target node.
    *
    * \param sgid GID of the sending Node.
-   * \param target pointer to target Node.
-   * \param target_thread thread that hosts the target node
-   * \param params parameter dict to configure the synapse
-   * \param syn The synapse model to use.
+   * \param target GID of the target Node.
+   * \param params Parameter dictionary to configure the synapse.
+   * \param syn_id The synapse model to use.
    */
-  bool connect( const index sgid, const index target, const DictionaryDatum& params, const synindex syn_id );
+  bool connect( const index sgid,
+    const index target,
+    const DictionaryDatum& params,
+    const synindex syn_id );
 
   index find_connection_sorted( const thread tid,
     const synindex syn_id,
@@ -175,6 +177,8 @@ public:
    * At this stage, the task of connect is to separate the dictionary into one
    * for each thread and then to forward the connect call to the connectors who
    * can then deal with the details of the connection.
+   *
+   * @note This method is used only by DataConnect.
    */
   bool data_connect_connectome( const ArrayDatum& connectome );
 
@@ -183,7 +187,9 @@ public:
    * The dictionary d contains arrays for all the connections of type syn.
    * AKA DataConnect
    */
-  void data_connect_single( const index source_id, DictionaryDatum d, const index syn );
+  void data_connect_single( const index source_id,
+    DictionaryDatum d,
+    const index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( const index source_gid,
@@ -235,13 +241,14 @@ public:
   void get_sources( const std::vector< index >& targets,
     const index syn_id,
     std::vector< std::vector< index > >& sources );
-  // TODO@5g: get_targets overloading necessary?
+
   void get_targets( const std::vector< index >& sources,
-    const index syn_id, const std::string& post_synaptic_element, 
+    const index syn_id,
+    const std::string& post_synaptic_element,
     std::vector< std::vector< index > >& targets );
 
-  const std::vector< Target >& get_targets( const thread tid,
-    const index lid ) const;
+  const std::vector< Target >&
+  get_remote_targets_of_local_node( const thread tid, const index lid ) const;
 
   index get_target_gid( const thread tid,
     const synindex syn_id,
@@ -315,7 +322,7 @@ public:
   void clear_source_table( const thread tid );
 
   //! Returns true if source table is kept after building network
-  bool get_keep_source_table() const; // TODO@5g: rename?
+  bool get_keep_source_table() const;
 
   //! Returns true if source table was cleared
   bool is_source_table_cleared() const;
@@ -340,7 +347,9 @@ public:
 
   void restore_source_table_entry_point( const thread tid );
 
-  void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
+  void add_target( const thread tid,
+    const thread target_rank,
+    const TargetData& target_data );
 
   /**
    * Return sort_connections_by_source_, which indicates whether
@@ -401,13 +410,15 @@ public:
     const index lid,
     const synindex syn_id ) const;
 
-  //! returns read position in MPI receive buffer for secondary
-  //! connections
+  /**
+   * Returns read position in MPI receive buffer for secondary connections.
+   */
   size_t get_secondary_recv_buffer_position( const thread tid,
     const synindex syn_id,
     const index lcid ) const;
 
-  bool deliver_secondary_events( const thread tid, const bool called_from_wfr_update,
+  bool deliver_secondary_events( const thread tid,
+    const bool called_from_wfr_update,
     std::vector< unsigned int >& recv_buffer );
 
   void compress_secondary_send_buffer_pos( const thread tid );
@@ -418,16 +429,14 @@ public:
 
   void check_secondary_connections_exist();
 
-  bool has_primary_connections() const; 
+  bool has_primary_connections() const;
 
   bool secondary_connections_exist() const;
 
-  index get_source_gid( const thread tid,
-    const synindex syn_id,
-    const index lcid );
+  index
+  get_source_gid( const thread tid, const synindex syn_id, const index lcid );
 
 private:
-
   size_t get_num_target_data( const thread tid ) const;
 
   size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
@@ -470,16 +479,16 @@ private:
    * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
    * numerics::nan indicates this and weight/delay are set only, if they are
-   *valid.
+   * valid.
    *
    * \param source A reference to the sending Node.
    * \param target A reference to the receiving Node.
    * \param s_gid The global id of the sending Node.
    * \param tid The thread of the target node.
-   * \param syn The synapse model to use.
+   * \param syn_id The synapse model to use.
+   * \param params The parameters for the connection.
    * \param delay The delay of the connection (optional).
    * \param weight The weight of the connection (optional).
-   * \param p The parameters for the connection.
    */
   void connect_( Node& source,
     Node& target,
@@ -503,10 +512,10 @@ private:
    * \param target A reference to the receiving Node.
    * \param s_gid The global id of the sending Node.
    * \param tid The thread of the target node.
-   * \param syn The synapse model to use.
+   * \param syn_id The synapse model to use.
+   * \param params The parameters for the connection.
    * \param delay The delay of the connection (optional).
    * \param weight The weight of the connection (optional).
-   * \param p The parameters for the connection.
    */
   void connect_to_device_( Node& source,
     Node& target,
@@ -530,10 +539,10 @@ private:
    * \param target A reference to the receiving Node.
    * \param s_gid The global id of the sending Node.
    * \param tid The thread of the target node.
-   * \param syn The synapse model to use.
+   * \param syn_id The synapse model to use.
+   * \param params The parameters for the connection.
    * \param delay The delay of the connection (optional).
    * \param weight The weight of the connection (optional).
-   * \param p The parameters for the connection.
    */
   void connect_from_device_( Node& source,
     Node& target,
@@ -543,12 +552,13 @@ private:
     const double delay = NAN,
     const double weight = NAN );
 
-  /** Increases the connection count.
+  /**
+   * Increases the connection count.
    */
-  void increase_connection_count( const thread tid,
-    const synindex syn_id );
+  void increase_connection_count( const thread tid, const synindex syn_id );
 
-  /** A structure to hold the Connector objects which in turn hold the
+  /**
+   * A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
    * structure: threads|synapses|connections
    */
@@ -558,11 +568,12 @@ private:
    * A structure to hold the global ids of presynaptic neurons during
    * postsynaptic connection creation, before the connection
    * information has been transferred to the presynaptic side.
-   * Internally arragend in a 3d structure: threads|synapses|gids
+   * Internally arranged in a 3d structure: threads|synapses|gids
    */
   SourceTable source_table_;
 
-  /** Stores absolute position in receive buffer of secondary events.
+  /**
+   * Stores absolute position in receive buffer of secondary events.
    * structure: threads|synapses|position
    */
   std::vector< std::vector< std::vector< size_t >* >* >
@@ -570,7 +581,8 @@ private:
 
   std::map< index, size_t > buffer_pos_of_source_gid_syn_id_;
 
-  /** A structure to hold the information about targets for each
+  /**
+   * A structure to hold the information about targets for each
    * neuron on the presynaptic side. Internally arranged in a 3d
    * structure: threads|localnodes|targets
    */
@@ -580,7 +592,8 @@ private:
 
   std::vector< DelayChecker > delay_checkers_;
 
-  /** A structure to count the number of synapses of a specific
+  /**
+   * A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
   std::vector< std::vector< size_t > > num_connections_;
@@ -603,17 +616,21 @@ private:
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
 
-  bool keep_source_table_; //!< Whether to keep source table after connection
-                           //setup is complete
+  //! Whether to keep source table after connection setup is complete.
+  bool keep_source_table_;
 
-  bool have_connections_changed_; //!< true if new connections have been created
-                                  //!< since startup or last call to simulate
+  //! True if new connections have been created since startup or last call to
+  //! simulate.
+  bool have_connections_changed_;
 
-  bool sort_connections_by_source_; //!< Whether to sort connections by source gid
+  //! Whether to sort connections by source gid.
+  bool sort_connections_by_source_;
 
-  bool has_primary_connections_; //!< Whether primary connections (spikes) exist
+  //! Whether primary connections (spikes) exist.
+  bool has_primary_connections_;
 
-  bool secondary_connections_exist_; //!< Whether secondary connections (e.g., gap junctions) exist
+  //! Whether secondary connections (e.g., gap junctions) exist.
+  bool secondary_connections_exist_;
 };
 
 inline DictionaryDatum&
@@ -713,7 +730,8 @@ ConnectionManager::prepare_target_table( const thread tid )
 }
 
 inline const std::vector< Target >&
-ConnectionManager::get_targets( const thread tid, const index lid ) const
+ConnectionManager::get_remote_targets_of_local_node( const thread tid,
+  const index lid ) const
 {
   return target_table_.get_targets( tid, lid );
 }
@@ -731,7 +749,9 @@ ConnectionManager::set_have_connections_changed( const bool changed )
 }
 
 inline void
-ConnectionManager::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
+ConnectionManager::add_target( const thread tid,
+  const thread target_rank,
+  const TargetData& target_data )
 {
   target_table_.add_target( tid, target_rank, target_data );
 }
@@ -743,16 +763,14 @@ ConnectionManager::get_next_target_data( const thread tid,
   thread& target_rank,
   TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid,
-    rank_start,
-    rank_end,
-    target_rank,
-    next_target_data );
+  return source_table_.get_next_target_data(
+    tid, rank_start, rank_end, target_rank, next_target_data );
 }
 
 inline const std::vector< size_t >&
 ConnectionManager::get_secondary_send_buffer_positions( const thread tid,
-  const index lid, const synindex syn_id ) const
+  const index lid,
+  const synindex syn_id ) const
 {
   return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id );
 }
@@ -766,7 +784,8 @@ ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
 }
 
 inline size_t
-ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id ) const
+ConnectionManager::get_num_connections_( const thread tid,
+  const synindex syn_id ) const
 {
   return ( *connections_5g_[ tid ] )[ syn_id ]->size();
 }
@@ -796,7 +815,7 @@ ConnectionManager::get_sort_connections_by_source() const
 {
   return sort_connections_by_source_;
 }
-  
+
 } // namespace nest
 
 #endif /* CONNECTION_MANAGER_H */

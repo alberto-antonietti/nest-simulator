@@ -52,7 +52,6 @@ NodeManager::NodeManager()
   , root_( 0 )
   , current_( 0 )
   , siblingcontainer_model_( 0 )
-  , n_gsd_( 0 )
   , nodes_vec_()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
@@ -237,79 +236,23 @@ index NodeManager::add_node( index mod, long n ) // no_p
   }
   kernel().modelrange_manager.add_range( mod, min_gid, max_gid - 1 );
 
-  if ( model->potential_global_receiver()
-    and kernel().mpi_manager.get_num_rec_processes() > 0 )
-  {
-    // In this branch we create nodes for global receivers
-    const int n_per_process = n / kernel().mpi_manager.get_num_rec_processes();
-    const int n_per_thread = n_per_process / n_threads + 1;
-
-    // We only need to reserve memory on the ranks on which we
-    // actually create nodes. In this if-branch ---> Only on recording
-    // processes
-    if ( kernel().mpi_manager.get_rank()
-      >= kernel().mpi_manager.get_num_sim_processes() )
-    {
-      local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
-        / kernel().mpi_manager.get_num_sim_processes() ) );
-      for ( thread tid = 0; tid < n_threads; ++tid )
-      {
-        // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-        model->reserve_additional( tid, n_per_thread );
-      }
-    }
-
-    for ( size_t gid = min_gid; gid < max_gid; ++gid )
-    {
-      const thread vp = kernel().vp_manager.suggest_rec_vp_for_gid( get_n_gsd() );
-      const thread tid = kernel().vp_manager.vp_to_thread( vp );
-
-      if ( kernel().vp_manager.is_local_vp( vp ) )
-      {
-        Node* newnode = model->allocate( tid );
-        newnode->set_gid_( gid );
-        newnode->set_model_id( mod );
-        newnode->set_thread( tid );
-        newnode->set_vp( vp );
-        newnode->set_has_proxies( true );
-        newnode->set_local_receiver( false );
-
-        local_nodes_.add_local_node( *newnode ); // put into local nodes list
-
-        current_->add_node( newnode ); // and into current subnet, thread 0.
-      }
-      else
-      {
-        local_nodes_.add_remote_node( gid ); // ensures max_gid is correct
-        current_->add_remote_node( gid, mod );
-      }
-      increment_n_gsd();
-    }
-  }
-
-  else if ( model->has_proxies() )
+  if ( model->has_proxies() )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / kernel().mpi_manager.get_num_sim_processes();
+    const int n_per_process = n / kernel().mpi_manager.get_num_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
     // We only need to reserve memory on the ranks on which we
-    // actually create nodes. In this if-branch ---> Only on
-    // simulation processes
-    if ( kernel().mpi_manager.get_rank()
-      < kernel().mpi_manager.get_num_sim_processes() )
+    // actually create nodes.
+    // TODO: This will work reasonably for round-robin. The extra 50 entries
+    //       are for subnets and devices.
+    local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                            / kernel().mpi_manager.get_num_processes() ) + 50 );
+    for ( thread tid = 0; tid < n_threads; ++tid )
     {
-      // TODO: This will work reasonably for round-robin. The extra 50 entries
-      //       are for subnets and devices.
-      local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid )
-          / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
-      for ( thread tid = 0; tid < n_threads; ++tid )
-      {
-        // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-        // reserves at least one entry on each thread, nobody knows why
-        model->reserve_additional( tid, n_per_thread );
-      }
+      // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
+      // reserves at least one entry on each thread, nobody knows why
+      model->reserve_additional( tid, n_per_thread );
     }
 
     size_t gid;
@@ -410,9 +353,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
     // The following loop creates n nodes. For each node, a wrapper is created
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
-    local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid )
-        / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
+    local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                            / kernel().mpi_manager.get_num_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       const thread tid = kernel().vp_manager.vp_to_thread(
@@ -491,8 +433,11 @@ index NodeManager::add_node( index mod, long n ) // no_p
   // resize the target table for delivery of events to devices to make
   // sure the first dimension matches the number of local nodes and
   // the second dimension matches number of synapse types
-  kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
-  kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
+  kernel()
+    .connection_manager.resize_target_table_devices_to_number_of_neurons();
+  kernel()
+    .connection_manager
+    .resize_target_table_devices_to_number_of_synapse_types();
 
   return max_gid - 1;
 }
@@ -559,34 +504,28 @@ inline index
 NodeManager::next_local_gid_( index curr_gid ) const
 {
   index rank = kernel().mpi_manager.get_rank();
-  index sim_procs = kernel().mpi_manager.get_num_sim_processes();
-  if ( rank >= sim_procs )
-  {
-    // i am a rec proc trying to add a non-gsd node => just iterate to next gid
-    return curr_gid + sim_procs;
-  }
+  index procs = kernel().mpi_manager.get_num_processes();
   // responsible process for curr_gid
-  index proc_of_curr_gid = curr_gid % sim_procs;
+  index proc_of_curr_gid = curr_gid % procs;
 
   if ( proc_of_curr_gid == rank )
   {
     // I am responsible for curr_gid, then add 'modulo'.
-    return curr_gid + sim_procs;
+    return curr_gid + procs;
   }
   else
   {
     // else add difference
     // make modulo positive and difference of my proc an curr_gid proc
-    return curr_gid + ( sim_procs + rank - proc_of_curr_gid ) % sim_procs;
+    return curr_gid + ( procs + rank - proc_of_curr_gid ) % procs;
   }
 }
 
 index
 NodeManager::get_max_num_local_nodes() const
 {
-  return static_cast< index >(
-    ceil( static_cast< double >(
-            size() ) / kernel().vp_manager.get_num_virtual_processes() ) );
+  return static_cast< index >( ceil( static_cast< double >( size() )
+    / kernel().vp_manager.get_num_virtual_processes() ) );
 }
 
 index
@@ -689,8 +628,9 @@ NodeManager::ensure_valid_thread_local_ids()
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if (  not node->is_subnet() and ( node->get_thread() == tid
-                                       or node->num_thread_siblings() > 0 ) )
+          if ( not node->is_subnet()
+            and ( node->get_thread() == tid
+                  or node->num_thread_siblings() > 0 ) )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )
