@@ -25,6 +25,7 @@
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
+#include "connection_manager.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "source_table.h"
@@ -224,6 +225,19 @@ nest::SourceTable::reserve( const thread tid,
 }
 
 nest::index
+nest::SourceTable::get_gid( const thread tid,
+  const synindex syn_id,
+  const index lcid ) const
+{
+  if ( not kernel().connection_manager.get_keep_source_table() )
+  {
+    throw KernelException(
+      "Cannot use SourceTable::get_gid when get_keep_source_table is false" );
+  }
+  return ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].get_gid();
+}
+
+nest::index
 nest::SourceTable::remove_disabled_sources( const thread tid,
   const synindex syn_id )
 {
@@ -253,28 +267,6 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
   return lcid;
-}
-
-void
-nest::SourceTable::print_sources( const thread tid,
-  const synindex syn_id ) const
-{
-  index prev_gid = 0;
-  std::cout << "-------------SOURCES-------------------\n";
-  for ( std::vector< Source >::const_iterator it =
-          ( *( *sources_[ tid ] )[ syn_id ] ).begin();
-        it != ( *( *sources_[ tid ] )[ syn_id ] ).end();
-        ++it )
-  {
-    if ( prev_gid != it->get_gid() )
-    {
-      std::cout << std::endl;
-      prev_gid = it->get_gid();
-    }
-    std::cout << "(" << it->get_gid() << ", " << it->is_disabled() << ")";
-  }
-  std::cout << std::endl;
-  std::cout << "---------------------------------------\n";
 }
 
 void

@@ -47,7 +47,7 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
+    .add_connection(
       source, target, &( *target_to_devices_[ tid ] )[ lid ], syn_id, p, d, w );
 }
 
@@ -67,7 +67,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g( source,
+    .add_connection( source,
       target,
       &( *target_from_devices_[ tid ] )[ ldid ],
       syn_id,
@@ -89,25 +89,6 @@ nest::TargetTableDevices::send_to_device( const thread tid,
   for ( std::vector< ConnectorBase* >::iterator it =
           ( *target_to_devices_[ tid ] )[ lid ].begin();
         it != ( *target_to_devices_[ tid ] )[ lid ].end();
-        ++it )
-  {
-    if ( *it != NULL )
-    {
-      ( *it )->send_to_all( tid, cm, e );
-    }
-  }
-}
-
-// TODO@5g: move to .h?
-inline void
-nest::TargetTableDevices::send_from_device( const thread tid,
-  const index ldid,
-  Event& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  for ( std::vector< ConnectorBase* >::iterator it =
-          ( *target_from_devices_[ tid ] )[ ldid ].begin();
-        it != ( *target_from_devices_[ tid ] )[ ldid ].end();
         ++it )
   {
     if ( *it != NULL )

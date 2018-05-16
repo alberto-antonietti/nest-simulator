@@ -93,7 +93,7 @@ public:
 
   /**
    * Returns all targets of a neuron. Used to fill
-   * EventDeliveryManager::spike_register_5g_.
+   * EventDeliveryManager::spike_register_.
    */
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;
@@ -117,11 +117,6 @@ public:
    * data multiple times.
    */
   void compress_secondary_send_buffer_pos( const thread tid );
-
-  // TODO@5g: remove
-  // Helper functions
-  void print_targets( const thread tid ) const;
-  void print_secondary_send_buffer_pos( const thread tid ) const;
 };
 
 inline const std::vector< Target >&
