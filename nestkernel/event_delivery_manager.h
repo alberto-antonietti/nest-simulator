@@ -25,16 +25,17 @@
 
 // C++ includes:
 #include <cassert>
-#include <vector>
 #include <limits>
+#include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h" // OffGridSpike
+#include "completed_checker.h"
 #include "event.h"
+#include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
@@ -216,6 +217,8 @@ public:
    */
   void gather_secondary_target_data();
 
+  void write_done_marker_secondary_events_( const bool done );
+
   void gather_secondary_events( const bool done );
 
   bool deliver_secondary_events( const thread tid,
@@ -238,22 +241,6 @@ public:
    * and for communication to zero; set local spike counter to zero.
    */
   virtual void reset_timers_counters();
-
-  Stopwatch sw_communicate_secondary_events;
-  Stopwatch sw_collocate_spike_data;
-  Stopwatch sw_communicate_spike_data;
-  Stopwatch sw_deliver_spike_data;
-  Stopwatch sw_collocate_target_data;
-  Stopwatch sw_communicate_target_data;
-  Stopwatch sw_distribute_target_data;
-
-  unsigned int comm_steps_target_data;
-  unsigned int comm_rounds_target_data;
-  unsigned int comm_steps_spike_data;
-  unsigned int comm_rounds_spike_data;
-  unsigned int comm_steps_secondary_events;
-
-  std::vector< unsigned int > call_count_deliver_events;
 
 private:
   template < typename SpikeDataT >
@@ -396,8 +383,8 @@ private:
   /**
    * Register for gids of neurons that spiked. This is a 4-dim
    * structure. While spikes are written to the buffer they are
-   * immediately sorted by the thread the will move the to the MPI
-   * buffers.
+   * immediately sorted by the thread that will later move the spikes to the
+   * MPI buffers.
    * - First dim: write threads (from node to register)
    * - Second dim: read threads (from register to MPI buffer)
    * - Third dim: lag
@@ -409,8 +396,8 @@ private:
   /**
    * Register for gids of precise neurons that spiked. This is a 4-dim
    * structure. While spikes are written to the buffer they are
-   * immediately sorted by the thread the will move the to the MPI
-   * buffers.
+   * immediately sorted by the thread that will later move the spikes to the
+   * MPI buffers.
    * - First dim: write threads (from node to register)
    * - Second dim: read threads (from register to MPI buffer)
    * - Third dim: lag
@@ -425,12 +412,6 @@ private:
    */
   std::vector< unsigned int > send_buffer_secondary_events_;
   std::vector< unsigned int > recv_buffer_secondary_events_;
-
-  /**
-   * Marker Value to be put between the data fields from different time
-   * steps during communication.
-   */
-  const unsigned int comm_marker_;
 
   /**
    * Time that was spent on collocation of MPI buffers during the last call to
@@ -457,15 +438,12 @@ private:
 
   std::vector< TargetData > send_buffer_target_data_;
   std::vector< TargetData > recv_buffer_target_data_;
+  //!< whether size of MPI buffer for communication of connections was changed
+  bool buffer_size_target_data_has_changed_;
+  //!< whether size of MPI buffer for communication of spikes was changed
+  bool buffer_size_spike_data_has_changed_;
 
-  bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for
-  // communication of connections was
-  // changed
-  bool buffer_size_spike_data_has_changed_; //!< whether size of MPI buffer for
-  // communication of spikes was
-  // changed
-
-  std::vector< unsigned int > completed_count_;
+  CompletedChecker gather_completed_checker_;
 };
 
 inline void
