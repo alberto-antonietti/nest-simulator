@@ -78,6 +78,8 @@ set( models_sources
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
     inhomogeneous_poisson_generator.h inhomogeneous_poisson_generator.cpp
+    closed_loop_neuron.h closed_loop_neuron.cpp
+    radial_basis_function_input.h radial_basis_function_input.cpp
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp
@@ -100,6 +102,8 @@ set( models_sources
     static_connection.h
     static_connection_hom_w.h
     stdp_connection.h
+    stdp_connection_sinexp.h stdp_connection_sinexp.cpp
+    stdp_connection_cosexp.h stdp_connection_cosexp.cpp
     stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h
     stdp_connection_hom.h stdp_connection_hom.cpp
     stdp_dopa_connection.h stdp_dopa_connection.cpp
@@ -113,6 +117,7 @@ set( models_sources
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
     volume_transmitter.h volume_transmitter.cpp
+    volume_transmitter_alberto.h volume_transmitter_alberto.cpp
     vogels_sprekeler_connection.h
     weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp

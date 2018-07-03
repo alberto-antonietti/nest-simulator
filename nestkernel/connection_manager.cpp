@@ -1701,3 +1701,31 @@ nest::ConnectionManager::check_secondary_connections_exist()
   secondary_connections_exist_ =
     kernel().mpi_manager.any_true( secondary_connections_exist_ );
 }
+
+void
+nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
+{
+  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must be less "
+      "than the simulation resolution." );
+  }
+  else if ( stdp_eps < 0 )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must not be "
+      "negative." );
+  }
+  else
+  {
+    stdp_eps_ = stdp_eps;
+
+    std::ostringstream os;
+    os << "Epsilon for spike-time comparison in STDP was set to "
+       << std::setprecision( std::numeric_limits< long double >::digits10 )
+       << stdp_eps_ << ".";
+
+    LOG( M_INFO, "ConnectionManager::set_stdp_eps", os.str() );
+  }
+}
