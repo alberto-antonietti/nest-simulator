@@ -55,6 +55,7 @@ const Name extent( "extent" );
 const Name grid( "grid" );
 const Name grid3d( "grid3d" );
 const Name inner_radius( "inner_radius" );
+const Name kappa( "kappa" );
 const Name kernel( "kernel" );
 const Name layer( "layer" );
 const Name layers( "layers" );

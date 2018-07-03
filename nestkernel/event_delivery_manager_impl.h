@@ -110,7 +110,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
       / kernel().vp_manager.get_num_assigned_ranks_per_thread();
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      ( *spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
+      ( *spike_register_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
     }
   }
 }
@@ -133,7 +133,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid,
       / kernel().vp_manager.get_num_assigned_ranks_per_thread();
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      ( *off_grid_spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back(
+      ( *off_grid_spike_register_[ tid ] )[ assigned_tid ][ lag ].push_back(
         OffGridTarget( *it, e.get_offset() ) );
     }
   }
@@ -150,10 +150,12 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
   // considered
   const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
   for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin();
-        cit != supported_syn_ids.end(); ++cit )
+        cit != supported_syn_ids.end();
+        ++cit )
   {
     const std::vector< size_t >& positions =
-      kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
+      kernel().connection_manager.get_secondary_send_buffer_positions(
+        tid, lid, *cit );
 
     for ( size_t i = 0; i < positions.size(); ++i )
     {

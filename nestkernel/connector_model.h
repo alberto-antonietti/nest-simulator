@@ -75,7 +75,7 @@ public:
    * omitted, NAN indicates this and weight/delay are set only if they are
    * valid.
    */
-  virtual void add_connection_5g( Node& src,
+  virtual void add_connection( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
@@ -175,7 +175,11 @@ public:
     bool has_delay,
     bool requires_symmetric,
     bool supports_wfr )
-    : ConnectorModel( name, is_primary, has_delay, requires_symmetric, supports_wfr )
+    : ConnectorModel( name,
+        is_primary,
+        has_delay,
+        requires_symmetric,
+        supports_wfr )
     , receptor_type_( 0 )
   {
   }
@@ -190,7 +194,7 @@ public:
   {
   }
 
-  void add_connection_5g( Node& src,
+  void add_connection( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
@@ -248,7 +252,7 @@ public:
 private:
   void used_default_delay();
 
-  void add_connection_5g_( Node& src,
+  void add_connection_( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
@@ -321,7 +325,6 @@ public:
   {
     return pev_;
   }
-
 };
 
 } // namespace nest

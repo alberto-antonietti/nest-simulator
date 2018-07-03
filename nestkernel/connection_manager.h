@@ -135,7 +135,10 @@ public:
    * \param params Parameter dictionary to configure the synapse.
    * \param syn_id The synapse model to use.
    */
-  bool connect( const index sgid, const index target, const DictionaryDatum& params, const synindex syn_id );
+  bool connect( const index sgid,
+    const index target,
+    const DictionaryDatum& params,
+    const synindex syn_id );
 
   index find_connection_sorted( const thread tid,
     const synindex syn_id,
@@ -147,17 +150,10 @@ public:
     const index sgid,
     const index tgid );
 
-  void disconnect_5g( const thread tid,
+  void disconnect( const thread tid,
     const synindex syn_id,
     const index sgid,
     const index tgid );
-
-  void print_source_table( const thread tid ) const;
-
-  void print_connections( const thread tid ) const;
-
-  void print_targets( const thread tid ) const;
-  void print_send_buffer_pos( const thread tid ) const;
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
@@ -184,7 +180,9 @@ public:
    * The dictionary d contains arrays for all the connections of type syn.
    * AKA DataConnect
    */
-  void data_connect_single( const index source_id, DictionaryDatum d, const index syn );
+  void data_connect_single( const index source_id,
+    DictionaryDatum d,
+    const index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( const index source_gid,
@@ -238,12 +236,12 @@ public:
     std::vector< std::vector< index > >& sources );
 
   void get_targets( const std::vector< index >& sources,
-    const index syn_id, const std::string& post_synaptic_element, 
+    const index syn_id,
+    const std::string& post_synaptic_element,
     std::vector< std::vector< index > >& targets );
 
-  const std::vector< Target >& get_remote_targets_of_local_node(
-    const thread tid,
-    const index lid ) const;
+  const std::vector< Target >&
+  get_remote_targets_of_local_node( const thread tid, const index lid ) const;
 
   index get_target_gid( const thread tid,
     const synindex syn_id,
@@ -272,9 +270,7 @@ public:
 
   bool get_user_set_delay_extrema() const;
 
-  void send( thread t, index sgid, Event& e );
-
-  void send_5g( const thread tid,
+  void send( const thread tid,
     const synindex syn_id,
     const index lcid,
     const std::vector< ConnectorModel* >& cm,
@@ -342,7 +338,9 @@ public:
 
   void restore_source_table_entry_point( const thread tid );
 
-  void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
+  void add_target( const thread tid,
+    const thread target_rank,
+    const TargetData& target_data );
 
   /**
    * Return sort_connections_by_source_, which indicates whether
@@ -410,7 +408,8 @@ public:
     const synindex syn_id,
     const index lcid ) const;
 
-  bool deliver_secondary_events( const thread tid, const bool called_from_wfr_update,
+  bool deliver_secondary_events( const thread tid,
+    const bool called_from_wfr_update,
     std::vector< unsigned int >& recv_buffer );
 
   void compress_secondary_send_buffer_pos( const thread tid );
@@ -421,20 +420,18 @@ public:
 
   void check_secondary_connections_exist();
 
-  bool has_primary_connections() const; 
+  bool has_primary_connections() const;
 
   bool secondary_connections_exist() const;
 
-  index get_source_gid( const thread tid,
-    const synindex syn_id,
-    const index lcid );
+  index
+  get_source_gid( const thread tid, const synindex syn_id, const index lcid );
 
   double get_stdp_eps() const;
 
   void set_stdp_eps( const double stdp_eps );
 
 private:
-
   size_t get_num_target_data( const thread tid ) const;
 
   size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
@@ -467,7 +464,7 @@ private:
   /**
    * Deletes all connections.
    */
-  void delete_connections_5g_();
+  void delete_connections_();
 
   /**
    * connect_ is used to establish a connection between a sender and
@@ -553,15 +550,14 @@ private:
   /**
    * Increases the connection count.
    */
-  void increase_connection_count( const thread tid,
-    const synindex syn_id );
+  void increase_connection_count( const thread tid, const synindex syn_id );
 
   /**
    * A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
    * structure: threads|synapses|connections
    */
-  std::vector< std::vector< ConnectorBase* >* > connections_5g_;
+  std::vector< std::vector< ConnectorBase* >* > connections_;
 
   /**
    * A structure to hold the global ids of presynaptic neurons during
@@ -630,6 +626,10 @@ private:
 
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
+
+  //! Maximum distance between (double) spike times in STDP that is
+  //! still considered 0. See issue #894
+  double stdp_eps_;
 };
 
 inline DictionaryDatum&
@@ -729,7 +729,8 @@ ConnectionManager::prepare_target_table( const thread tid )
 }
 
 inline const std::vector< Target >&
-ConnectionManager::get_remote_targets_of_local_node( const thread tid, const index lid ) const
+ConnectionManager::get_remote_targets_of_local_node( const thread tid,
+  const index lid ) const
 {
   return target_table_.get_targets( tid, lid );
 }
@@ -747,7 +748,9 @@ ConnectionManager::set_have_connections_changed( const bool changed )
 }
 
 inline void
-ConnectionManager::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
+ConnectionManager::add_target( const thread tid,
+  const thread target_rank,
+  const TargetData& target_data )
 {
   target_table_.add_target( tid, target_rank, target_data );
 }
@@ -759,16 +762,14 @@ ConnectionManager::get_next_target_data( const thread tid,
   thread& target_rank,
   TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid,
-    rank_start,
-    rank_end,
-    target_rank,
-    next_target_data );
+  return source_table_.get_next_target_data(
+    tid, rank_start, rank_end, target_rank, next_target_data );
 }
 
 inline const std::vector< size_t >&
 ConnectionManager::get_secondary_send_buffer_positions( const thread tid,
-  const index lid, const synindex syn_id ) const
+  const index lid,
+  const synindex syn_id ) const
 {
   return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id );
 }
@@ -782,9 +783,10 @@ ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
 }
 
 inline size_t
-ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id ) const
+ConnectionManager::get_num_connections_( const thread tid,
+  const synindex syn_id ) const
 {
-  return ( *connections_5g_[ tid ] )[ syn_id ]->size();
+  return ( *connections_[ tid ] )[ syn_id ]->size();
 }
 
 inline index
@@ -811,6 +813,12 @@ inline bool
 ConnectionManager::get_sort_connections_by_source() const
 {
   return sort_connections_by_source_;
+}
+
+inline double
+ConnectionManager::get_stdp_eps() const
+{
+  return stdp_eps_;
 }
 
 } // namespace nest

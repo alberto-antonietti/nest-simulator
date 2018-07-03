@@ -47,7 +47,7 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
+    .add_connection(
       source, target, &( *target_to_devices_[ tid ] )[ lid ], syn_id, p, d, w );
 }
 
@@ -67,8 +67,13 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
-      source, target, &( *target_from_devices_[ tid ] )[ ldid ], syn_id, p, d, w );
+    .add_connection( source,
+      target,
+      &( *target_from_devices_[ tid ] )[ ldid ],
+      syn_id,
+      p,
+      d,
+      w );
 
   // store gid of sending device
   ( *sending_devices_gids_[ tid ] )[ ldid ] = source.get_gid();
@@ -81,25 +86,10 @@ nest::TargetTableDevices::send_to_device( const thread tid,
   const std::vector< ConnectorModel* >& cm )
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
-  for ( std::vector< ConnectorBase* >::iterator it = ( *target_to_devices_[ tid ] )[ lid ].begin();
-        it != ( *target_to_devices_[ tid ] )[ lid ].end(); ++it )
-  {
-    if ( *it != NULL )
-    {
-      ( *it )->send_to_all( tid, cm, e);
-    }
-  }
-}
-
-// TODO@5g: move to .h?
-inline void
-nest::TargetTableDevices::send_from_device( const thread tid,
-  const index ldid,
-  Event& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  for ( std::vector< ConnectorBase* >::iterator it = ( *target_from_devices_[ tid ] )[ ldid ].begin();
-        it != ( *target_from_devices_[ tid ] )[ ldid ].end(); ++it )
+  for ( std::vector< ConnectorBase* >::iterator it =
+          ( *target_to_devices_[ tid ] )[ lid ].begin();
+        it != ( *target_to_devices_[ tid ] )[ lid ].end();
+        ++it )
   {
     if ( *it != NULL )
     {
@@ -118,7 +108,8 @@ nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   if ( ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
   {
-    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status(
+      tid, lcid, dict );
   }
 }
 
@@ -133,7 +124,8 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   if ( ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
   {
-    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status(
+      lcid, dict, cm );
   }
 }
 

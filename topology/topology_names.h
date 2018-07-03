@@ -63,6 +63,7 @@ extern const Name extent;
 extern const Name grid;
 extern const Name grid3d;
 extern const Name inner_radius;
+extern const Name kappa;
 extern const Name kernel;
 extern const Name layer;
 extern const Name layers;

@@ -84,7 +84,9 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
-        runner != history_.end() and runner->t_ <= t_first_read;
+        runner != history_.end()
+          and ( t_first_read - runner->t_ > -1.0
+                  * kernel().connection_manager.get_stdp_eps() );
         ++runner )
   {
     ( runner->access_counter_ )++;
@@ -162,12 +164,16 @@ nest::Archiving_Node::get_history( double t1,
   else
   {
     std::deque< histentry >::iterator runner = history_.begin();
-    while ( ( runner != history_.end() ) and ( runner->t_ <= t1 ) )
+    while ( ( runner != history_.end() )
+      and ( t1 - runner->t_ > -1.0
+                * kernel().connection_manager.get_stdp_eps() ) )
     {
       ++runner;
     }
     *start = runner;
-    while ( ( runner != history_.end() ) and ( runner->t_ <= t2 ) )
+    while ( ( runner != history_.end() )
+      and ( t2 - runner->t_ > -1.0
+                * kernel().connection_manager.get_stdp_eps() ) )
     {
       ( runner->access_counter_ )++;
       ++runner;

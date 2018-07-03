@@ -168,13 +168,13 @@ public:
   }
 
 private:
-  double weight_;  //!< synaptic weight
-  double U_;       //!< unit increment of a facilitating synapse (U)
-  double u_;       //!< dynamic value of probability of release
-  double tau_rec_; //!< [ms] time constant for recovery from depression (D)
-  double tau_fac_; //!< [ms] time constant for facilitation (F)
-  int n_;          //!< Number of release sites
-  int a_;          //!< Number of available release sites
+  double weight_;      //!< synaptic weight
+  double U_;           //!< unit increment of a facilitating synapse (U)
+  double u_;           //!< dynamic value of probability of release
+  double tau_rec_;     //!< [ms] time constant for recovery from depression (D)
+  double tau_fac_;     //!< [ms] time constant for facilitation (F)
+  int n_;              //!< Number of release sites
+  int a_;              //!< Number of available release sites
   double t_lastspike_; //!< Time point of last spike emitted
 };
 
@@ -191,7 +191,6 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   thread t,
   const CommonSynapseProperties& )
 {
-  const int vp = get_target( t )->get_vp();
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
 
