@@ -82,6 +82,8 @@
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
+#include "closed_loop_neuron.h"
+#include "radial_basis_function_input.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
@@ -119,6 +121,7 @@
 #include "weight_recorder.h"
 
 #include "volume_transmitter.h"
+#include "volume_transmitter_alberto.h"
 
 // Prototypes for synapses
 #include "bernoulli_connection.h"
@@ -140,6 +143,7 @@
 #include "stdp_nn_restr_connection.h"
 #include "stdp_nn_symm_connection.h"
 #include "stdp_nn_pre-centered_connection.h"
+
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
@@ -262,6 +266,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
+
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
   /** @BeginDocumentation
